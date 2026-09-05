@@ -185,6 +185,38 @@ export class CashbookEntryList extends Component {
         this.onFilterChange();
     }
 
+    get hasActiveFilters() {
+        const f = this.state.filters;
+        return Boolean(
+            f.search.trim() ||
+                f.bookId ||
+                f.businessId ||
+                f.entryTypeId ||
+                f.partnerId ||
+                f.paymentMethodId ||
+                f.dateFrom ||
+                f.dateTo ||
+                f.partnerScope !== "all" ||
+                f.paymentStatus !== "all"
+        );
+    }
+
+    async clearFilters() {
+        this.state.filters = {
+            bookId: "",
+            businessId: "",
+            entryTypeId: "",
+            partnerId: "",
+            paymentMethodId: "",
+            partnerScope: "all",
+            paymentStatus: "all",
+            dateFrom: "",
+            dateTo: "",
+            search: "",
+        };
+        await this.loadEntries();
+    }
+
     formatMoney(amount, currencyId) {
         return formatMonetary(amount || 0, { currencyId });
     }

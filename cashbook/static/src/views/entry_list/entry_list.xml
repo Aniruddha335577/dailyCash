@@ -43,28 +43,50 @@
 
                     <!-- Filters -->
                     <div class="cb-filter-panel card mb-3">
-                        <div class="cb-filter-row">
-                            <div class="cb-filter-field cb-filter-search">
-                                <label class="cb-filter-label">Search</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-search"/></span>
-                                    <input type="text" class="form-control" placeholder="Partner or remarks..."
-                                           t-model="state.filters.search"
-                                           t-on-keydown="onSearchKeydown"/>
+                        <div class="cb-filter-header">
+                            <div class="cb-filter-heading">
+                                <i class="fa fa-sliders cb-filter-heading-icon"/>
+                                <span>Filters</span>
+                            </div>
+                            <button t-if="hasActiveFilters"
+                                    type="button"
+                                    class="btn btn-link btn-sm cb-filter-clear p-0"
+                                    t-on-click="clearFilters">
+                                <i class="fa fa-times me-1"/> Clear all
+                            </button>
+                        </div>
+
+                        <div class="cb-filter-toolbar">
+                            <div class="cb-filter-search-wrap">
+                                <i class="fa fa-search cb-filter-search-icon"/>
+                                <input type="text"
+                                       class="form-control cb-filter-search-input"
+                                       placeholder="Search partner or remarks..."
+                                       t-model="state.filters.search"
+                                       t-on-keydown="onSearchKeydown"/>
+                            </div>
+                            <div class="cb-filter-period">
+                                <span class="cb-filter-period-label">
+                                    <i class="fa fa-calendar me-1"/> Period
+                                </span>
+                                <div class="cb-filter-date-range">
+                                    <input type="date"
+                                           class="form-control form-control-sm"
+                                           t-model="state.filters.dateFrom"
+                                           t-on-change="onFilterChange"/>
+                                    <span class="cb-filter-date-sep">→</span>
+                                    <input type="date"
+                                           class="form-control form-control-sm"
+                                           t-model="state.filters.dateTo"
+                                           t-on-change="onFilterChange"/>
                                 </div>
                             </div>
-                            <div class="cb-filter-field">
-                                <label class="cb-filter-label">Book</label>
-                                <select class="form-select" t-model="state.filters.bookId" t-on-change="onFilterChange">
-                                    <option value="">All Books</option>
-                                    <t t-foreach="state.books" t-as="book" t-key="book.id">
-                                        <option t-att-value="book.id" t-esc="book.name"/>
-                                    </t>
-                                </select>
-                            </div>
+                        </div>
+
+                        <div class="cb-filter-grid">
                             <div class="cb-filter-field">
                                 <label class="cb-filter-label">Business</label>
-                                <select class="form-select" t-model="state.filters.businessId" t-on-change="onFilterChange">
+                                <select class="form-select form-select-sm" t-model="state.filters.businessId" t-on-change="onFilterChange">
                                     <option value="">All Businesses</option>
                                     <t t-foreach="state.businesses" t-as="business" t-key="business.id">
                                         <option t-att-value="business.id" t-esc="business.name"/>
@@ -72,8 +94,17 @@
                                 </select>
                             </div>
                             <div class="cb-filter-field">
+                                <label class="cb-filter-label">Book</label>
+                                <select class="form-select form-select-sm" t-model="state.filters.bookId" t-on-change="onFilterChange">
+                                    <option value="">All Books</option>
+                                    <t t-foreach="state.books" t-as="book" t-key="book.id">
+                                        <option t-att-value="book.id" t-esc="book.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="cb-filter-field">
                                 <label class="cb-filter-label">Entry Type</label>
-                                <select class="form-select" t-model="state.filters.entryTypeId" t-on-change="onFilterChange">
+                                <select class="form-select form-select-sm" t-model="state.filters.entryTypeId" t-on-change="onFilterChange">
                                     <option value="">All Types</option>
                                     <t t-foreach="state.entryTypes" t-as="et" t-key="et.id">
                                         <option t-att-value="et.id" t-esc="et.name"/>
@@ -82,7 +113,7 @@
                             </div>
                             <div class="cb-filter-field">
                                 <label class="cb-filter-label">Partner</label>
-                                <select class="form-select" t-model="state.filters.partnerId" t-on-change="onFilterChange">
+                                <select class="form-select form-select-sm" t-model="state.filters.partnerId" t-on-change="onFilterChange">
                                     <option value="">All Partners</option>
                                     <t t-foreach="state.partners" t-as="partner" t-key="partner.id">
                                         <option t-att-value="partner.id" t-esc="partner.name"/>
@@ -91,43 +122,40 @@
                             </div>
                             <div class="cb-filter-field">
                                 <label class="cb-filter-label">Payment Method</label>
-                                <select class="form-select" t-model="state.filters.paymentMethodId" t-on-change="onFilterChange">
+                                <select class="form-select form-select-sm" t-model="state.filters.paymentMethodId" t-on-change="onFilterChange">
                                     <option value="">All Methods</option>
                                     <t t-foreach="state.paymentMethods" t-as="pm" t-key="pm.id">
                                         <option t-att-value="pm.id" t-esc="pm.name"/>
                                     </t>
                                 </select>
                             </div>
-                            <div class="cb-filter-field">
-                                <label class="cb-filter-label">From</label>
-                                <input type="date" class="form-control" t-model="state.filters.dateFrom" t-on-change="onFilterChange"/>
-                            </div>
-                            <div class="cb-filter-field">
-                                <label class="cb-filter-label">To</label>
-                                <input type="date" class="form-control" t-model="state.filters.dateTo" t-on-change="onFilterChange"/>
-                            </div>
                         </div>
 
-                        <div class="cb-chip-row">
-                            <span class="cb-chip-label">Partner</span>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'all' ? ' active' : '')"
-                                    t-on-click="() => this.setPartnerScope('all')">All</button>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'customer' ? ' active' : '')"
-                                    t-on-click="() => this.setPartnerScope('customer')">Customer</button>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'vendor' ? ' active' : '')"
-                                    t-on-click="() => this.setPartnerScope('vendor')">Vendor</button>
-
-                            <span class="cb-chip-sep"/>
-
-                            <span class="cb-chip-label">Payment</span>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'all' ? ' active' : '')"
-                                    t-on-click="() => this.setPaymentStatus('all')">All</button>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'paid' ? ' active' : '')"
-                                    t-on-click="() => this.setPaymentStatus('paid')">Paid</button>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'partial' ? ' active' : '')"
-                                    t-on-click="() => this.setPaymentStatus('partial')">Partial</button>
-                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'unpaid' ? ' active' : '')"
-                                    t-on-click="() => this.setPaymentStatus('unpaid')">Unpaid</button>
+                        <div class="cb-filter-quick">
+                            <div class="cb-filter-quick-group">
+                                <span class="cb-chip-label">Partner type</span>
+                                <div class="cb-chip-group">
+                                    <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'all' ? ' active' : '')"
+                                            t-on-click="() => this.setPartnerScope('all')">All</button>
+                                    <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'customer' ? ' active' : '')"
+                                            t-on-click="() => this.setPartnerScope('customer')">Customer</button>
+                                    <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'vendor' ? ' active' : '')"
+                                            t-on-click="() => this.setPartnerScope('vendor')">Vendor</button>
+                                </div>
+                            </div>
+                            <div class="cb-filter-quick-group">
+                                <span class="cb-chip-label">Payment status</span>
+                                <div class="cb-chip-group">
+                                    <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'all' ? ' active' : '')"
+                                            t-on-click="() => this.setPaymentStatus('all')">All</button>
+                                    <button type="button" t-att-class="'cb-chip cb-chip-paid' + (state.filters.paymentStatus === 'paid' ? ' active' : '')"
+                                            t-on-click="() => this.setPaymentStatus('paid')">Paid</button>
+                                    <button type="button" t-att-class="'cb-chip cb-chip-partial' + (state.filters.paymentStatus === 'partial' ? ' active' : '')"
+                                            t-on-click="() => this.setPaymentStatus('partial')">Partial</button>
+                                    <button type="button" t-att-class="'cb-chip cb-chip-unpaid' + (state.filters.paymentStatus === 'unpaid' ? ' active' : '')"
+                                            t-on-click="() => this.setPaymentStatus('unpaid')">Unpaid</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
