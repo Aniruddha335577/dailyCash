@@ -12,11 +12,7 @@ const MENU_ICONS = {
 
 export function isCashbookApp(menuService) {
     const app = menuService.getCurrentApp();
-    const result = Boolean(app?.xmlid?.startsWith("cashbook."));
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/426c4ef8-177a-40cf-aa0d-43be0692a04e',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'577a85'},body:JSON.stringify({sessionId:'577a85',location:'shell_utils.js:isCashbookApp',message:'isCashbookApp check',data:{appXmlid:app?.xmlid||null,appId:app?.id||null,result},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
-    return result;
+    return Boolean(app?.xmlid?.startsWith("cashbook."));
 }
 
 export function getMenuIcon(menu) {

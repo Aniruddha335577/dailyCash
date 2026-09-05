@@ -20,11 +20,7 @@ patch(NavBar.prototype, {
     },
 
     get useCashbookShell() {
-        const result = isCashbookApp(this.menuService);
-        // #region agent log
-        fetch('http://127.0.0.1:7245/ingest/426c4ef8-177a-40cf-aa0d-43be0692a04e',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'577a85'},body:JSON.stringify({sessionId:'577a85',location:'navbar.js:useCashbookShell',message:'navbar shell check',data:{result,envIsSmall:this.env.isSmall},timestamp:Date.now(),hypothesisId:'A,B'})}).catch(()=>{});
-        // #endregion
-        return result;
+        return isCashbookApp(this.menuService);
     },
 
     get currentAppSections() {
