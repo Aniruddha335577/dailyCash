@@ -1,0 +1,106 @@
+.cb_sidebar {
+    --cb-sidebar-bg: #f8fafc;
+    --cb-sidebar-border: #e2e8f0;
+    --cb-sidebar-text: #334155;
+    --cb-sidebar-muted: #64748b;
+    --cb-sidebar-active-bg: rgba($o-brand-primary, 0.1);
+    --cb-sidebar-active-text: #{$o-brand-primary};
+    --cb-sidebar-width: 240px;
+
+    width: var(--cb-sidebar-width);
+    flex-shrink: 0;
+    background: var(--cb-sidebar-bg);
+    border-right: 1px solid var(--cb-sidebar-border);
+    overflow-y: auto;
+}
+
+.cb_sidebar_nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.75rem 0.65rem 1rem;
+}
+
+.cb_sidebar_item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    color: var(--cb-sidebar-text);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background: #eef2f7;
+    }
+
+    &.active {
+        background: var(--cb-sidebar-active-bg);
+        color: var(--cb-sidebar-active-text);
+
+        .cb_sidebar_icon {
+            color: var(--cb-sidebar-active-text);
+        }
+    }
+}
+
+.cb_sidebar_item--parent {
+    .cb_sidebar_chevron {
+        margin-left: auto;
+        font-size: 0.65rem;
+        color: var(--cb-sidebar-muted);
+        transition: transform 0.15s ease;
+    }
+}
+
+.cb_sidebar_group--open {
+    .cb_sidebar_chevron {
+        transform: rotate(180deg);
+    }
+}
+
+.cb_sidebar_sub {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.15rem 0 0.35rem 0.35rem;
+}
+
+.cb_sidebar_item--sub {
+    font-size: 0.84rem;
+    font-weight: 500;
+    padding: 0.5rem 0.65rem 0.5rem 1.85rem;
+    color: var(--cb-sidebar-muted);
+
+    &.active {
+        color: var(--cb-sidebar-active-text);
+    }
+}
+
+.cb_sidebar_icon {
+    width: 1.1rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--cb-sidebar-muted);
+    flex-shrink: 0;
+}
+
+.cb_sidebar_icon--sub {
+    width: 0.95rem;
+    font-size: 0.8rem;
+}
+
+.cb_sidebar_label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -8,7 +8,9 @@
     "depends": ["web"],
     "data": [
         "security/ir.model.access.csv",
+        "data/cashbook_config.xml",
         "data/payment_method_data.xml",
+        "views/login_templates.xml",
         "views/business_views.xml",
         "views/book_views.xml",
         "views/entry_type_views.xml",
@@ -21,9 +23,14 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "cashbook/static/src/**/*.js",
-            "cashbook/static/src/**/*.xml",
-            "cashbook/static/src/**/*.scss",
+            "cashbook/static/src/shell/**/*",
+            "cashbook/static/src/views/**/*",
+            "cashbook/static/src/components/**/*",
+            "cashbook/static/src/utils/**/*",
+            "cashbook/static/src/styles/**/*",
+        ],
+        "web.assets_frontend": [
+            "cashbook/static/src/public/login.scss",
         ],
     },
     "installable": True,

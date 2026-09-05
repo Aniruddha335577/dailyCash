@@ -42,7 +42,7 @@ export class CashbookEntryList extends Component {
                 paymentStatus: "all",
                 dateFrom: "",
                 dateTo: "",
-                search: "",
+                search: ctx.default_search || "",
             },
             quickEntry: {
                 open: false,

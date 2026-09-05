@@ -1,0 +1,225 @@
+.cb_navbar {
+    --cb-nav-bg: #ffffff;
+    --cb-nav-border: #e2e8f0;
+    --cb-nav-text: #0f172a;
+    --cb-nav-muted: #64748b;
+    --cb-nav-accent: #{$o-brand-primary};
+
+    .cb_main_navbar {
+        --o-navbar-height: 56px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        height: 56px;
+        padding: 0 1rem;
+        background: var(--cb-nav-bg);
+        border-bottom: 1px solid var(--cb-nav-border);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .cb_navbar_menu_btn {
+        border: 1px solid var(--cb-nav-border);
+        background: #f8fafc;
+        color: var(--cb-nav-text);
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .cb_navbar_brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        user-select: none;
+    }
+
+    .cb_navbar_logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #6366f1, #4f46e5);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+    }
+
+    .cb_navbar_title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--cb-nav-text);
+    }
+
+    .cb_navbar_actions {
+        gap: 0.35rem;
+        background: transparent !important;
+    }
+
+    .cb-global-search {
+        flex: 1;
+        max-width: 520px;
+        min-width: 180px;
+        position: relative;
+    }
+
+    .cb-global-search-icon {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--cb-nav-muted);
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+
+    .cb-global-search-input {
+        width: 100%;
+        height: 38px;
+        border: 1px solid var(--cb-nav-border);
+        border-radius: 999px;
+        background: #f8fafc;
+        padding: 0 4.5rem 0 2.25rem;
+        font-size: 0.88rem;
+        color: var(--cb-nav-text);
+
+        &:focus {
+            outline: none;
+            border-color: var(--cb-nav-accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba($o-brand-primary, 0.12);
+        }
+    }
+
+    .cb-global-search-hint {
+        position: absolute;
+        right: 0.65rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--cb-nav-muted);
+        background: #fff;
+        border: 1px solid var(--cb-nav-border);
+        border-radius: 6px;
+        padding: 0.1rem 0.35rem;
+    }
+
+    .cb-quick-create-btn {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 0.35rem 0.85rem;
+    }
+
+    // Restyle default user menu inside CashBook shell
+    .o_user_menu .dropdown-toggle {
+        border: 1px solid var(--cb-nav-border);
+        border-radius: 999px;
+        padding: 0.15rem 0.35rem 0.15rem 0.15rem;
+        background: #f8fafc;
+
+        .o_user_avatar {
+            height: calc(var(--o-navbar-height) - 20px);
+            width: calc(var(--o-navbar-height) - 20px);
+            object-fit: cover;
+        }
+    }
+}
+
+.cb-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    z-index: 1040;
+}
+
+.cb-mobile-menu-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 88vw;
+    max-width: 300px;
+    height: 100vh;
+    background: #fff;
+    z-index: 1050;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.12);
+    display: flex;
+    flex-direction: column;
+}
+
+.cb-mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.cb-mobile-menu-nav {
+    padding: 0.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.cb-mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    padding: 0.65rem 0.75rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+
+    .fa {
+        width: 1rem;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    &:hover {
+        background: #f1f5f9;
+    }
+}
+
+.cb-mobile-menu-item-sub {
+    padding-left: 2.35rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.cb-mobile-menu-panel-enter-active,
+.cb-mobile-menu-panel-leave-active {
+    transition: transform 0.2s ease;
+}
+
+.cb-mobile-menu-panel-enter-from,
+.cb-mobile-menu-panel-leave-to {
+    transform: translateX(-100%);
+}
+
+.cb-mobile-menu-enter-active,
+.cb-mobile-menu-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.cb-mobile-menu-enter-from,
+.cb-mobile-menu-leave-to {
+    opacity: 0;
+}

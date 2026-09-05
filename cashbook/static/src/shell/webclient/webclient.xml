@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.WebClient">
+        <t t-if="!state.fullscreen">
+            <NavBar/>
+        </t>
+        <t t-if="useCashbookShell">
+            <div class="cb_shell_layout">
+                <CashbookSidebar t-if="!env.isSmall"/>
+                <main class="cb_shell_main">
+                    <ActionContainer/>
+                </main>
+            </div>
+        </t>
+        <t t-else="">
+            <ActionContainer/>
+        </t>
+        <MainComponentsContainer/>
+    </t>
+
+</templates>

@@ -1,0 +1,24 @@
+body.o_web_client.cb_cashbook_shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.cb_shell_layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.cb_shell_main {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    background: $o-webclient-background-color;
+
+    .o_action_manager {
+        min-height: 100%;
+    }
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.Sidebar">
+        <aside class="cb_sidebar d-print-none">
+            <nav class="cb_sidebar_nav">
+                <t t-foreach="sections" t-as="section" t-key="section.id">
+                    <t t-if="section.childrenTree.length">
+                        <div class="cb_sidebar_group"
+                             t-att-class="{ 'cb_sidebar_group--open': isExpanded(section) }">
+                            <button type="button"
+                                    class="cb_sidebar_item cb_sidebar_item--parent"
+                                    t-att-class="{ active: isActive(section) or isChildActive(section) }"
+                                    t-on-click="() => this.onSelectMenu(section)">
+                                <i t-att-class="'fa ' + getIcon(section) + ' cb_sidebar_icon'"/>
+                                <span class="cb_sidebar_label" t-esc="section.name"/>
+                                <i class="fa fa-chevron-down cb_sidebar_chevron"
+                                   t-on-click.stop="(ev) => this.toggleExpand(section, ev)"/>
+                            </button>
+                            <div class="cb_sidebar_sub" t-if="isExpanded(section)">
+                                <t t-foreach="section.childrenTree" t-as="child" t-key="child.id">
+                                    <button type="button"
+                                            class="cb_sidebar_item cb_sidebar_item--sub"
+                                            t-att-class="{ active: isActive(child) }"
+                                            t-on-click="() => this.onSelectMenu(child)">
+                                        <i t-att-class="'fa ' + getIcon(child) + ' cb_sidebar_icon cb_sidebar_icon--sub'"/>
+                                        <span class="cb_sidebar_label" t-esc="child.name"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <button type="button"
+                                class="cb_sidebar_item"
+                                t-att-class="{ active: isActive(section) }"
+                                t-on-click="() => this.onSelectMenu(section)">
+                            <i t-att-class="'fa ' + getIcon(section) + ' cb_sidebar_icon'"/>
+                            <span class="cb_sidebar_label" t-esc="section.name"/>
+                        </button>
+                    </t>
+                </t>
+            </nav>
+        </aside>
+    </t>
+
+</templates>

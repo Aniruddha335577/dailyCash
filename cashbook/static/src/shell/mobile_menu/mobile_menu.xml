@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="cashbook.MobileMenu">
+        <t t-portal="'body'">
+            <Transition name="'cb-mobile-menu'" visible="props.open" leaveDuration="200" t-slot-scope="transition">
+                <div t-att-class="'cb-mobile-menu-backdrop ' + (transition.className || '')"
+                     t-if="props.open"
+                     t-on-click="props.onClose"/>
+            </Transition>
+            <Transition name="'cb-mobile-menu-panel'" visible="props.open" leaveDuration="200" t-slot-scope="transition">
+                <aside t-if="props.open" t-att-class="'cb-mobile-menu-panel ' + (transition.className || '')">
+                    <div class="cb-mobile-menu-head">
+                        <span class="fw-bold">CashBook</span>
+                        <button type="button" class="btn btn-link text-reset p-0" t-on-click="props.onClose">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                    <nav class="cb-mobile-menu-nav">
+                        <t t-foreach="props.sections" t-as="section" t-key="section.id">
+                            <button type="button"
+                                    class="cb-mobile-menu-item"
+                                    t-on-click="() => this.onMenuClick(section)">
+                                <i t-att-class="'fa ' + getIcon(section)"/>
+                                <span t-esc="section.name"/>
+                            </button>
+                            <t t-if="section.childrenTree.length">
+                                <t t-foreach="section.childrenTree" t-as="child" t-key="child.id">
+                                    <button type="button"
+                                            class="cb-mobile-menu-item cb-mobile-menu-item-sub"
+                                            t-on-click="() => this.onMenuClick(child)">
+                                        <i t-att-class="'fa ' + getIcon(child)"/>
+                                        <span t-esc="child.name"/>
+                                    </button>
+                                </t>
+                            </t>
+                        </t>
+                    </nav>
+                </aside>
+            </Transition>
+        </t>
+    </t>
+</templates>

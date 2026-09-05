@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.NavBar">
+        <t t-if="useCashbookShell">
+            <header class="o_navbar cb_navbar" t-ref="root">
+                <nav class="cb_main_navbar d-print-none" data-command-category="disabled">
+                    <t t-if="env.isSmall">
+                        <button type="button"
+                                class="cb_navbar_menu_btn"
+                                title="Menu"
+                                t-on-click="openCashbookMobileMenu">
+                            <i class="fa fa-bars"/>
+                        </button>
+                    </t>
+
+                    <div class="cb_navbar_brand" t-on-click="goCashbookHome">
+                        <span class="cb_navbar_logo"><i class="fa fa-book"/></span>
+                        <span class="cb_navbar_title">CashBook</span>
+                    </div>
+
+                    <CashbookGlobalSearch t-if="!env.isSmall"/>
+
+                    <div class="cb_navbar_actions o_menu_systray d-flex align-items-center flex-shrink-0 ms-auto">
+                        <CashbookQuickCreate t-if="!env.isSmall"/>
+                        <t t-foreach="systrayItems" t-as="item" t-key="item.key">
+                            <div t-att-data-index="item.index"/>
+                            <ErrorHandler onError="error => this.handleItemError(error, item)">
+                                <t t-component="item.Component" t-props="item.props"/>
+                            </ErrorHandler>
+                        </t>
+                    </div>
+                </nav>
+
+                <CashbookMobileMenu
+                    open="cbState.mobileMenuOpen"
+                    sections="cashbookMenuSections"
+                    onClose.bind="closeCashbookMobileMenu"
+                    onSelectMenu.bind="onCashbookMenuSelect"
+                />
+            </header>
+        </t>
+        <t t-else="" t-call="web.NavBar"/>
+    </t>
+
+</templates>

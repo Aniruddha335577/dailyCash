@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="cashbook.QuickCreate">
+        <Dropdown>
+            <button type="button" class="btn btn-primary btn-sm cb-quick-create-btn">
+                <i class="fa fa-plus me-1"/> New
+            </button>
+            <t t-set-slot="content">
+                <DropdownItem onSelected.bind="newEntry">New Entry</DropdownItem>
+                <DropdownItem onSelected.bind="newPartner">New Partner</DropdownItem>
+                <DropdownItem onSelected.bind="newBook">New Book</DropdownItem>
+            </t>
+        </Dropdown>
+    </t>
+</templates>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="cashbook_layout_title" inherit_id="web.layout">
+        <xpath expr="//title" position="replace">
+            <title t-esc="title or 'CashBook'"/>
+        </xpath>
+    </template>
+
+    <template id="cashbook_login_layout" inherit_id="web.login_layout">
+        <xpath expr="//t[@t-set='body_classname']" position="replace">
+            <t t-set="body_classname" t-value="'cb-login-body'"/>
+        </xpath>
+
+        <xpath expr="//t[@t-set='body_classname']" position="after">
+            <t t-set="cashbook_saas_mode" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.saas_mode', 'True') == 'True'"/>
+            <t t-if="cashbook_saas_mode">
+                <t t-set="disable_database_manager" t-value="True"/>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[hasclass('container')]" position="replace">
+            <div class="cb-login-shell">
+                <aside class="cb-login-brand">
+                    <div class="cb-login-brand-inner">
+                        <div class="cb-login-logo-mark">
+                            <i class="fa fa-book"/>
+                        </div>
+                        <h1 class="cb-login-product">CashBook</h1>
+                        <p class="cb-login-tagline">
+                            A lightweight business ledger for teams who want clarity without accounting complexity.
+                        </p>
+                        <ul class="cb-login-features">
+                            <li><i class="fa fa-check-circle"/> Track entries, payments, and balances</li>
+                            <li><i class="fa fa-check-circle"/> Organize books by business and partner</li>
+                            <li><i class="fa fa-check-circle"/> Built for modern SaaS workflows</li>
+                        </ul>
+                    </div>
+                </aside>
+                <main class="cb-login-main">
+                    <div class="cb-login-form-card">
+                        <div class="cb-login-form-header">
+                            <h2>Sign in</h2>
+                            <p>Enter your credentials to access your workspace.</p>
+                        </div>
+                        <t t-out="0"/>
+                    </div>
+                </main>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="cashbook_login" inherit_id="web.login">
+        <xpath expr="//div[@id='oe_structure_login_top']" position="before">
+            <t t-set="cashbook_saas_mode" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.saas_mode', 'True') == 'True'"/>
+        </xpath>
+
+        <xpath expr="//div[@t-if='databases and len(databases) &gt; 1']" position="attributes">
+            <attribute name="t-if">databases and len(databases) &gt; 1 and not cashbook_saas_mode</attribute>
+        </xpath>
+
+        <xpath expr="//label[@for='login']" position="replace">
+            <label for="login" class="form-label">Email</label>
+        </xpath>
+
+        <xpath expr="//button[@type='submit'][hasclass('btn-primary')]" position="replace">
+            <button type="submit" class="btn btn-primary cb-login-submit">Sign in</button>
+        </xpath>
+    </template>
+</odoo>

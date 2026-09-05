@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="cashbook.GlobalSearch">
+        <div class="cb-global-search">
+            <i class="fa fa-search cb-global-search-icon"/>
+            <input type="text"
+                   class="cb-global-search-input"
+                   placeholder="Search entries or partners..."
+                   t-model="state.query"
+                   t-on-keydown="onKeydown"/>
+            <span class="cb-global-search-hint">Enter</span>
+        </div>
+    </t>
+</templates>
