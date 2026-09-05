@@ -7,13 +7,13 @@
     <menuitem id="menu_cashbook_business"
               name="Businesses"
               parent="menu_cashbook_root"
-              action="action_cashbook_business"
+              action="action_cashbook_business_ui"
               sequence="10"/>
 
     <menuitem id="menu_cashbook_book"
               name="Books"
               parent="menu_cashbook_root"
-              action="action_cashbook_book"
+              action="action_cashbook_book_ui"
               sequence="20"/>
 
     <menuitem id="menu_cashbook_entry"
@@ -25,23 +25,24 @@
     <menuitem id="menu_cashbook_partner"
               name="Partners"
               parent="menu_cashbook_root"
-              action="action_cashbook_partner"
+              action="action_cashbook_partner_ui"
               sequence="40"/>
 
     <menuitem id="menu_cashbook_configuration"
               name="Configuration"
               parent="menu_cashbook_root"
+              action="action_cashbook_configuration_ui"
               sequence="90"/>
 
     <menuitem id="menu_cashbook_entry_type"
               name="Entry Types"
               parent="menu_cashbook_configuration"
-              action="action_cashbook_entry_type"
+              action="action_cashbook_entry_type_ui"
               sequence="10"/>
 
     <menuitem id="menu_cashbook_payment_method"
               name="Payment Methods"
               parent="menu_cashbook_configuration"
-              action="action_cashbook_payment_method"
+              action="action_cashbook_payment_method_ui"
               sequence="20"/>
 </odoo>

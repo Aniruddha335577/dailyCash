@@ -24,12 +24,20 @@ export class CashbookEntryList extends Component {
         this.state = useState({
             entries: [],
             books: [],
+            businesses: [],
             entryTypes: [],
+            partners: [],
+            paymentMethods: [],
             loading: true,
             summary: { total: 0, paid: 0, due: 0 },
             filters: {
                 bookId: ctx.default_book_id ? String(ctx.default_book_id) : "",
-                entryTypeId: "",
+                businessId: ctx.default_business_id ? String(ctx.default_business_id) : "",
+                entryTypeId: ctx.default_entry_type_id ? String(ctx.default_entry_type_id) : "",
+                partnerId: ctx.default_partner_id ? String(ctx.default_partner_id) : "",
+                paymentMethodId: ctx.default_payment_method_id
+                    ? String(ctx.default_payment_method_id)
+                    : "",
                 partnerScope: ctx.default_partner_scope || "all",
                 paymentStatus: "all",
                 dateFrom: "",
@@ -60,8 +68,21 @@ export class CashbookEntryList extends Component {
         if (f.bookId) {
             domain.push(["book_id", "=", parseInt(f.bookId, 10)]);
         }
+        if (f.businessId) {
+            domain.push(["business_id", "=", parseInt(f.businessId, 10)]);
+        }
         if (f.entryTypeId) {
             domain.push(["entry_type_id", "=", parseInt(f.entryTypeId, 10)]);
+        }
+        if (f.partnerId) {
+            domain.push(["partner_id", "=", parseInt(f.partnerId, 10)]);
+        }
+        if (f.paymentMethodId) {
+            domain.push([
+                "payment_ids.payment_method_id",
+                "=",
+                parseInt(f.paymentMethodId, 10),
+            ]);
         }
         if (f.partnerScope === "customer") {
             domain.push(["partner_id.partner_type", "in", ["customer", "both"]]);
@@ -89,12 +110,27 @@ export class CashbookEntryList extends Component {
     }
 
     async loadFilterOptions() {
-        const [books, entryTypes] = await Promise.all([
+        const [books, businesses, entryTypes, partners, paymentMethods] = await Promise.all([
             this.orm.searchRead("cashbook.book", [], ["id", "name"], { order: "name" }),
+            this.orm.searchRead("cashbook.business", [["active", "=", true]], ["id", "name"], {
+                order: "name",
+            }),
             this.orm.searchRead("cashbook.entry.type", [], ["id", "name"], { order: "name" }),
+            this.orm.searchRead("cashbook.partner", [["active", "=", true]], ["id", "name"], {
+                order: "name",
+            }),
+            this.orm.searchRead(
+                "cashbook.payment.method",
+                [["active", "=", true]],
+                ["id", "name"],
+                { order: "name" }
+            ),
         ]);
         this.state.books = books;
+        this.state.businesses = businesses;
         this.state.entryTypes = entryTypes;
+        this.state.partners = partners;
+        this.state.paymentMethods = paymentMethods;
     }
 
     async loadEntries() {

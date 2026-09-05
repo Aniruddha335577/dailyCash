@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.ConfigurationList">
+        <div class="o_action o_cashbook_card_list o_cashbook_configuration">
+            <Layout display="display">
+                <t t-set-slot="layout-buttons">
+                    <div class="o_cp_buttons d-flex gap-2">
+                        <t t-if="showEntryTypes and !showPaymentMethods">
+                            <button type="button" class="btn btn-primary" t-on-click="createEntryType">
+                                <i class="fa fa-plus me-1"/> New Entry Type
+                            </button>
+                            <button type="button" class="btn btn-secondary" t-on-click="openClassicEntryTypes">
+                                Classic View
+                            </button>
+                        </t>
+                        <t t-elif="showPaymentMethods and !showEntryTypes">
+                            <button type="button" class="btn btn-primary" t-on-click="createPaymentMethod">
+                                <i class="fa fa-plus me-1"/> New Payment Method
+                            </button>
+                            <button type="button" class="btn btn-secondary" t-on-click="openClassicPaymentMethods">
+                                Classic View
+                            </button>
+                        </t>
+                    </div>
+                </t>
+
+                <div class="cb-card-page">
+                    <div class="cb-card-toolbar">
+                        <div class="cb-card-search">
+                            <label class="cb-card-filter-label">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                <input type="text" class="form-control" placeholder="Name or description..."
+                                       t-model="state.search"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-if="state.loading">
+                        <div class="cb-empty-state">
+                            <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+                            <p class="mt-2 text-muted">Loading configuration...</p>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-if="showEntryTypes">
+                            <div class="cb-config-section">
+                                <div class="cb-config-section-head">
+                                    <div>
+                                        <h2 class="cb-config-title">Entry Types</h2>
+                                        <p class="cb-config-subtitle">Classify cashbook transactions</p>
+                                    </div>
+                                    <div class="d-flex gap-2" t-if="showPaymentMethods">
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                t-on-click="createEntryType">
+                                            <i class="fa fa-plus me-1"/> New
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                t-on-click="openClassicEntryTypes">
+                                            Classic
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <t t-if="!filteredEntryTypes.length">
+                                    <div class="cb-empty-state cb-empty-state-compact">
+                                        <p class="text-muted mb-2">No entry types found.</p>
+                                        <button type="button" class="btn btn-sm btn-primary" t-on-click="createEntryType">
+                                            <i class="fa fa-plus me-1"/> New Entry Type
+                                        </button>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="cb-card-grid">
+                                        <t t-foreach="filteredEntryTypes" t-as="entryType" t-key="entryType.id">
+                                            <div class="cb-entity-card cb-config-card"
+                                                 t-on-click="() => this.openEntryType(entryType)">
+                                                <div class="cb-entity-card-head">
+                                                    <div class="cb-entity-icon cb-entity-icon-entry-type">
+                                                        <i class="fa fa-tag"/>
+                                                    </div>
+                                                    <div class="flex-grow-1 min-w-0">
+                                                        <h3 class="cb-entity-title text-truncate" t-esc="entryType.name"/>
+                                                    </div>
+                                                </div>
+                                                <t t-if="entryType.description">
+                                                    <p class="cb-entity-desc" t-esc="entryType.description"/>
+                                                </t>
+                                                <t t-set="stats" t-value="entryTypeStats(entryType)"/>
+                                                <div class="cb-entity-stats cb-entity-stats-2">
+                                                    <div class="cb-entity-stat">
+                                                        <span class="cb-entity-stat-label">Entries</span>
+                                                        <span class="cb-entity-stat-value" t-esc="stats.count"/>
+                                                    </div>
+                                                    <div class="cb-entity-stat">
+                                                        <span class="cb-entity-stat-label">Total</span>
+                                                        <span class="cb-entity-stat-value"
+                                                              t-esc="formatMoney(stats.total, stats.currencyId)"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <t t-if="showPaymentMethods">
+                            <div class="cb-config-section">
+                                <div class="cb-config-section-head">
+                                    <div>
+                                        <h2 class="cb-config-title">Payment Methods</h2>
+                                        <p class="cb-config-subtitle">Cash, bank, mobile wallet, and more</p>
+                                    </div>
+                                    <div class="d-flex gap-2" t-if="showEntryTypes">
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                t-on-click="createPaymentMethod">
+                                            <i class="fa fa-plus me-1"/> New
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                t-on-click="openClassicPaymentMethods">
+                                            Classic
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <t t-if="!filteredPaymentMethods.length">
+                                    <div class="cb-empty-state cb-empty-state-compact">
+                                        <p class="text-muted mb-2">No payment methods found.</p>
+                                        <button type="button" class="btn btn-sm btn-primary"
+                                                t-on-click="createPaymentMethod">
+                                            <i class="fa fa-plus me-1"/> New Payment Method
+                                        </button>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="cb-card-grid">
+                                        <t t-foreach="filteredPaymentMethods" t-as="paymentMethod" t-key="paymentMethod.id">
+                                            <div class="cb-entity-card cb-config-card"
+                                                 t-on-click="() => this.openPaymentMethod(paymentMethod)">
+                                                <div class="cb-entity-card-head">
+                                                    <div class="cb-entity-icon cb-entity-icon-payment">
+                                                        <i class="fa fa-credit-card"/>
+                                                    </div>
+                                                    <div class="flex-grow-1 min-w-0">
+                                                        <h3 class="cb-entity-title text-truncate" t-esc="paymentMethod.name"/>
+                                                    </div>
+                                                </div>
+                                                <t t-if="paymentMethod.description">
+                                                    <p class="cb-entity-desc" t-esc="paymentMethod.description"/>
+                                                </t>
+                                                <t t-set="stats" t-value="paymentMethodStats(paymentMethod)"/>
+                                                <div class="cb-entity-stats cb-entity-stats-2">
+                                                    <div class="cb-entity-stat">
+                                                        <span class="cb-entity-stat-label">Payments</span>
+                                                        <span class="cb-entity-stat-value" t-esc="stats.count"/>
+                                                    </div>
+                                                    <div class="cb-entity-stat">
+                                                        <span class="cb-entity-stat-label">Amount</span>
+                                                        <span class="cb-entity-stat-value cb-stat-paid"
+                                                              t-esc="formatMoney(stats.total)"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </Layout>
+        </div>
+    </t>
+
+</templates>

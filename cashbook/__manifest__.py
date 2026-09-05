@@ -15,6 +15,7 @@
         "views/partner_views.xml",
         "views/entry_views.xml",
         "views/entry_list_action.xml",
+        "views/card_list_actions.xml",
         "views/payment_method_views.xml",
         "views/menus.xml",
     ],

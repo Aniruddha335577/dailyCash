@@ -63,11 +63,38 @@
                                 </select>
                             </div>
                             <div class="cb-filter-field">
+                                <label class="cb-filter-label">Business</label>
+                                <select class="form-select" t-model="state.filters.businessId" t-on-change="onFilterChange">
+                                    <option value="">All Businesses</option>
+                                    <t t-foreach="state.businesses" t-as="business" t-key="business.id">
+                                        <option t-att-value="business.id" t-esc="business.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="cb-filter-field">
                                 <label class="cb-filter-label">Entry Type</label>
                                 <select class="form-select" t-model="state.filters.entryTypeId" t-on-change="onFilterChange">
                                     <option value="">All Types</option>
                                     <t t-foreach="state.entryTypes" t-as="et" t-key="et.id">
                                         <option t-att-value="et.id" t-esc="et.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="cb-filter-field">
+                                <label class="cb-filter-label">Partner</label>
+                                <select class="form-select" t-model="state.filters.partnerId" t-on-change="onFilterChange">
+                                    <option value="">All Partners</option>
+                                    <t t-foreach="state.partners" t-as="partner" t-key="partner.id">
+                                        <option t-att-value="partner.id" t-esc="partner.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="cb-filter-field">
+                                <label class="cb-filter-label">Payment Method</label>
+                                <select class="form-select" t-model="state.filters.paymentMethodId" t-on-change="onFilterChange">
+                                    <option value="">All Methods</option>
+                                    <t t-foreach="state.paymentMethods" t-as="pm" t-key="pm.id">
+                                        <option t-att-value="pm.id" t-esc="pm.name"/>
                                     </t>
                                 </select>
                             </div>
@@ -170,6 +197,8 @@
                         books="state.books"
                         entryTypes="state.entryTypes"
                         defaultBookId="state.filters.bookId"
+                        defaultPartnerId="state.filters.partnerId"
+                        defaultEntryTypeId="state.filters.entryTypeId"
                         onClose.bind="closeQuickEntry"
                         onSaved.bind="onQuickEntrySaved"
                     />

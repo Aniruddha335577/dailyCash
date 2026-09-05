@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.PartnerList">
+        <div class="o_action o_cashbook_card_list">
+            <Layout display="display">
+                <t t-set-slot="layout-buttons">
+                    <div class="o_cp_buttons d-flex gap-2">
+                        <button type="button" class="btn btn-primary" t-on-click="createPartner">
+                            <i class="fa fa-plus me-1"/> New Partner
+                        </button>
+                        <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
+                            Classic View
+                        </button>
+                    </div>
+                </t>
+
+                <div class="cb-card-page">
+                    <div class="cb-card-toolbar">
+                        <div class="cb-card-search">
+                            <label class="cb-card-filter-label">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                <input type="text" class="form-control" placeholder="Name, phone, or notes..."
+                                       t-model="state.search"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cb-chip-row">
+                        <span class="cb-chip-label">Type</span>
+                        <button type="button"
+                                t-att-class="'cb-chip' + (state.partnerType === 'all' ? ' active' : '')"
+                                t-on-click="() => this.setPartnerType('all')">All</button>
+                        <button type="button"
+                                t-att-class="'cb-chip' + (state.partnerType === 'customer' ? ' active' : '')"
+                                t-on-click="() => this.setPartnerType('customer')">Customer</button>
+                        <button type="button"
+                                t-att-class="'cb-chip' + (state.partnerType === 'vendor' ? ' active' : '')"
+                                t-on-click="() => this.setPartnerType('vendor')">Vendor</button>
+                    </div>
+
+                    <t t-if="state.loading">
+                        <div class="cb-empty-state">
+                            <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+                            <p class="mt-2 text-muted">Loading partners...</p>
+                        </div>
+                    </t>
+                    <t t-elif="!filteredPartners.length">
+                        <div class="cb-empty-state">
+                            <i class="fa fa-users fa-3x text-muted"/>
+                            <h5 class="mt-3">No partners found</h5>
+                            <p class="text-muted">Add customers and vendors to link them to entries.</p>
+                            <button type="button" class="btn btn-primary mt-2" t-on-click="createPartner">
+                                <i class="fa fa-plus me-1"/> New Partner
+                            </button>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="cb-card-grid">
+                            <t t-foreach="filteredPartners" t-as="partner" t-key="partner.id">
+                                <div class="cb-entity-card" t-on-click="() => this.openPartner(partner)">
+                                    <div class="cb-entity-card-head">
+                                        <div t-att-class="'cb-entity-icon cb-entity-icon-partner ' + partnerIconClass(partner.partner_type)">
+                                            <i class="fa fa-user"/>
+                                        </div>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <h3 class="cb-entity-title text-truncate" t-esc="partner.name"/>
+                                            <span t-att-class="'cb-type-badge ' + partnerTypeClass(partner.partner_type)"
+                                                  t-esc="partnerTypeLabel(partner.partner_type)"/>
+                                            <t t-if="partner.phone">
+                                                <div class="cb-entity-subtitle">
+                                                    <i class="fa fa-phone me-1"/>
+                                                    <span t-esc="partner.phone"/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <t t-if="partner.notes">
+                                        <p class="cb-entity-desc" t-esc="partner.notes"/>
+                                    </t>
+                                    <t t-set="stats" t-value="partnerStats(partner)"/>
+                                    <div class="cb-entity-stats">
+                                        <div class="cb-entity-stat">
+                                            <span class="cb-entity-stat-label">Entries</span>
+                                            <span class="cb-entity-stat-value" t-esc="stats.count"/>
+                                        </div>
+                                        <div class="cb-entity-stat">
+                                            <span class="cb-entity-stat-label">Total</span>
+                                            <span class="cb-entity-stat-value"
+                                                  t-esc="formatMoney(stats.total, stats.currencyId)"/>
+                                        </div>
+                                        <div class="cb-entity-stat">
+                                            <span class="cb-entity-stat-label">Due</span>
+                                            <span class="cb-entity-stat-value cb-stat-due"
+                                                  t-esc="formatMoney(stats.due, stats.currencyId)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </Layout>
+        </div>
+    </t>
+
+</templates>

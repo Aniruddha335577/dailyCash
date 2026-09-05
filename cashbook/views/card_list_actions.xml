@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_cashbook_book_ui" model="ir.actions.client">
+        <field name="name">Books</field>
+        <field name="tag">cashbook_book_list</field>
+    </record>
+
+    <record id="action_cashbook_partner_ui" model="ir.actions.client">
+        <field name="name">Partners</field>
+        <field name="tag">cashbook_partner_list</field>
+    </record>
+
+    <record id="action_cashbook_business_ui" model="ir.actions.client">
+        <field name="name">Businesses</field>
+        <field name="tag">cashbook_business_list</field>
+    </record>
+
+    <record id="action_cashbook_configuration_ui" model="ir.actions.client">
+        <field name="name">Configuration</field>
+        <field name="tag">cashbook_configuration_list</field>
+    </record>
+
+    <record id="action_cashbook_entry_type_ui" model="ir.actions.client">
+        <field name="name">Entry Types</field>
+        <field name="tag">cashbook_configuration_list</field>
+        <field name="context">{'default_section': 'entry_types'}</field>
+    </record>
+
+    <record id="action_cashbook_payment_method_ui" model="ir.actions.client">
+        <field name="name">Payment Methods</field>
+        <field name="tag">cashbook_configuration_list</field>
+        <field name="context">{'default_section': 'payment_methods'}</field>
+    </record>
+</odoo>

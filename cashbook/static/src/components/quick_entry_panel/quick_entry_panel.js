@@ -47,6 +47,8 @@ export class QuickEntryPanel extends Component {
         books: { type: Array },
         entryTypes: { type: Array },
         defaultBookId: { type: String, optional: true },
+        defaultPartnerId: { type: String, optional: true },
+        defaultEntryTypeId: { type: String, optional: true },
         onClose: Function,
         onSaved: Function,
     };
@@ -125,8 +127,13 @@ export class QuickEntryPanel extends Component {
         } else if (this.props.books.length) {
             this.state.form.book_id = String(this.props.books[0].id);
         }
-        if (this.props.entryTypes.length) {
+        if (this.props.defaultEntryTypeId) {
+            this.state.form.entry_type_id = String(this.props.defaultEntryTypeId);
+        } else if (this.props.entryTypes.length) {
             this.state.form.entry_type_id = String(this.props.entryTypes[0].id);
+        }
+        if (this.props.defaultPartnerId) {
+            this.state.form.partner_id = String(this.props.defaultPartnerId);
         }
         this._updateCurrencyFromBook();
     }

@@ -58,13 +58,9 @@
 
     .cb-filter-row {
         display: grid;
-        grid-template-columns: 2fr repeat(4, minmax(120px, 1fr));
+        grid-template-columns: 2fr repeat(auto-fit, minmax(120px, 1fr));
         gap: 0.75rem;
         align-items: end;
-
-        @media (max-width: 1200px) {
-            grid-template-columns: 1fr 1fr;
-        }
 
         @media (max-width: 576px) {
             grid-template-columns: 1fr;

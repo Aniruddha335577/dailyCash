@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.BookList">
+        <div class="o_action o_cashbook_card_list">
+            <Layout display="display">
+                <t t-set-slot="layout-buttons">
+                    <div class="o_cp_buttons d-flex gap-2">
+                        <button type="button" class="btn btn-primary" t-on-click="createBook">
+                            <i class="fa fa-plus me-1"/> New Book
+                        </button>
+                        <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
+                            Classic View
+                        </button>
+                    </div>
+                </t>
+
+                <div class="cb-card-page">
+                    <div class="cb-card-toolbar">
+                        <div class="cb-card-search">
+                            <label class="cb-card-filter-label">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                <input type="text" class="form-control" placeholder="Book or business name..."
+                                       t-model="state.search"/>
+                            </div>
+                        </div>
+                        <div class="cb-card-filter-field">
+                            <label class="cb-card-filter-label">Business</label>
+                            <select class="form-select" t-model="state.businessId">
+                                <option value="">All Businesses</option>
+                                <t t-foreach="state.businesses" t-as="business" t-key="business.id">
+                                    <option t-att-value="business.id" t-esc="business.name"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+
+                    <t t-if="state.loading">
+                        <div class="cb-empty-state">
+                            <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+                            <p class="mt-2 text-muted">Loading books...</p>
+                        </div>
+                    </t>
+                    <t t-elif="!filteredBooks.length">
+                        <div class="cb-empty-state">
+                            <i class="fa fa-book fa-3x text-muted"/>
+                            <h5 class="mt-3">No books found</h5>
+                            <p class="text-muted">Create a book to start recording entries.</p>
+                            <button type="button" class="btn btn-primary mt-2" t-on-click="createBook">
+                                <i class="fa fa-plus me-1"/> New Book
+                            </button>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="cb-card-grid">
+                            <t t-foreach="filteredBooks" t-as="book" t-key="book.id">
+                                <div class="cb-entity-card" t-on-click="() => this.openBook(book)">
+                                    <div class="cb-entity-card-head">
+                                        <div class="cb-entity-icon cb-entity-icon-book">
+                                            <i class="fa fa-book"/>
+                                        </div>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <h3 class="cb-entity-title text-truncate" t-esc="book.name"/>
+                                            <div class="cb-entity-subtitle text-truncate"
+                                                 t-esc="book.business_id ? book.business_id[1] : ''"/>
+                                        </div>
+                                    </div>
+                                    <t t-if="book.description">
+                                        <p class="cb-entity-desc" t-esc="book.description"/>
+                                    </t>
+                                    <t t-set="stats" t-value="bookStats(book)"/>
+                                    <div class="cb-entity-stats">
+                                        <div class="cb-entity-stat">
+                                            <span class="cb-entity-stat-label">Entries</span>
+                                            <span class="cb-entity-stat-value" t-esc="stats.count"/>
+                                        </div>
+                                        <div class="cb-entity-stat">
+                                            <span class="cb-entity-stat-label">Total</span>
+                                            <span class="cb-entity-stat-value"
+                                                  t-esc="formatMoney(stats.total, book.currency_id[0])"/>
+                                        </div>
+                                        <div class="cb-entity-stat">
+                                            <span class="cb-entity-stat-label">Due</span>
+                                            <span class="cb-entity-stat-value cb-stat-due"
+                                                  t-esc="formatMoney(stats.due, book.currency_id[0])"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </Layout>
+        </div>
+    </t>
+
+</templates>
