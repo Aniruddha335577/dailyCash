@@ -1,0 +1,22 @@
+{
+    "name": "CashBook",
+    "version": "19.0.1.0.0",
+    "category": "Accounting/Accounting",
+    "summary": "Lightweight business ledger without accounting dependencies",
+    "license": "LGPL-3",
+    "author": "SoftoBRo",
+    "depends": ["base"],
+    "data": [
+        "security/ir.model.access.csv",
+        "data/payment_method_data.xml",
+        "views/business_views.xml",
+        "views/book_views.xml",
+        "views/entry_type_views.xml",
+        "views/partner_views.xml",
+        "views/entry_views.xml",
+        "views/payment_method_views.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+    "application": True,
+}

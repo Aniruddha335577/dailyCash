@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_cashbook_root"
+              name="CashBook"
+              sequence="25"/>
+
+    <menuitem id="menu_cashbook_business"
+              name="Businesses"
+              parent="menu_cashbook_root"
+              action="action_cashbook_business"
+              sequence="10"/>
+
+    <menuitem id="menu_cashbook_book"
+              name="Books"
+              parent="menu_cashbook_root"
+              action="action_cashbook_book"
+              sequence="20"/>
+
+    <menuitem id="menu_cashbook_entry"
+              name="Entries"
+              parent="menu_cashbook_root"
+              action="action_cashbook_entry"
+              sequence="30"/>
+
+    <menuitem id="menu_cashbook_partner"
+              name="Partners"
+              parent="menu_cashbook_root"
+              action="action_cashbook_partner"
+              sequence="40"/>
+
+    <menuitem id="menu_cashbook_configuration"
+              name="Configuration"
+              parent="menu_cashbook_root"
+              sequence="90"/>
+
+    <menuitem id="menu_cashbook_entry_type"
+              name="Entry Types"
+              parent="menu_cashbook_configuration"
+              action="action_cashbook_entry_type"
+              sequence="10"/>
+
+    <menuitem id="menu_cashbook_payment_method"
+              name="Payment Methods"
+              parent="menu_cashbook_configuration"
+              action="action_cashbook_payment_method"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="payment_method_cash" model="cashbook.payment.method">
+        <field name="name">Cash</field>
+    </record>
+    <record id="payment_method_bank" model="cashbook.payment.method">
+        <field name="name">Bank</field>
+    </record>
+    <record id="payment_method_bkash" model="cashbook.payment.method">
+        <field name="name">bKash</field>
+    </record>
+    <record id="payment_method_nagad" model="cashbook.payment.method">
+        <field name="name">Nagad</field>
+    </record>
+    <record id="payment_method_card" model="cashbook.payment.method">
+        <field name="name">Card</field>
+    </record>
+    <record id="payment_method_other" model="cashbook.payment.method">
+        <field name="name">Other</field>
+    </record>
+</odoo>

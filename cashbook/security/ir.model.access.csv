@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cashbook_business_user,cashbook.business.user,model_cashbook_business,base.group_user,1,1,1,1
+access_cashbook_book_user,cashbook.book.user,model_cashbook_book,base.group_user,1,1,1,1
+access_cashbook_entry_type_user,cashbook.entry.type.user,model_cashbook_entry_type,base.group_user,1,1,1,1
+access_cashbook_partner_user,cashbook.partner.user,model_cashbook_partner,base.group_user,1,1,1,1
+access_cashbook_entry_user,cashbook.entry.user,model_cashbook_entry,base.group_user,1,1,1,1
+access_cashbook_entry_line_user,cashbook.entry.line.user,model_cashbook_entry_line,base.group_user,1,1,1,1
+access_cashbook_payment_method_user,cashbook.payment.method.user,model_cashbook_payment_method,base.group_user,1,1,1,1
+access_cashbook_payment_user,cashbook.payment.user,model_cashbook_payment,base.group_user,1,1,1,1

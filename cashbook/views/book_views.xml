@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cashbook_book_list" model="ir.ui.view">
+        <field name="name">cashbook.book.list</field>
+        <field name="model">cashbook.book</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="business_id"/>
+                <field name="currency_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cashbook_book_form" model="ir.ui.view">
+        <field name="name">cashbook.book.form</field>
+        <field name="model">cashbook.book</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group>
+                        <field name="business_id"/>
+                        <field name="name"/>
+                        <field name="currency_id" readonly="1"/>
+                        <field name="description"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cashbook_book_search" model="ir.ui.view">
+        <field name="name">cashbook.book.search</field>
+        <field name="model">cashbook.book</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="business_id"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <group>
+                    <filter name="group_business" string="Business" context="{'group_by': 'business_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cashbook_book" model="ir.actions.act_window">
+        <field name="name">Books</field>
+        <field name="res_model">cashbook.book</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cashbook_entry_list" model="ir.ui.view">
+        <field name="name">cashbook.entry.list</field>
+        <field name="model">cashbook.entry</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="entry_datetime"/>
+                <field name="book_id"/>
+                <field name="business_id" optional="show"/>
+                <field name="entry_type_id"/>
+                <field name="partner_id"/>
+                <field name="total_amount"/>
+                <field name="paid"/>
+                <field name="due"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cashbook_entry_form" model="ir.ui.view">
+        <field name="name">cashbook.entry.form</field>
+        <field name="model">cashbook.entry</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="book_id"/>
+                            <field name="business_id" readonly="1"/>
+                            <field name="entry_type_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="entry_datetime"/>
+                            <field name="currency_id" readonly="1"/>
+                            <field name="create_uid" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Entry Lines" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="product_name"/>
+                                    <field name="product_price"/>
+                                    <field name="quantity"/>
+                                    <field name="uom"/>
+                                    <field name="total_price" readonly="1"/>
+                                    <field name="description"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Payments" name="payments">
+                            <field name="payment_ids">
+                                <list editable="bottom">
+                                    <field name="payment_method_id"/>
+                                    <field name="amount"/>
+                                    <field name="payment_datetime"/>
+                                    <field name="remarks"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group class="oe_subtotal_footer">
+                        <field name="total_amount" readonly="1"/>
+                        <field name="paid" readonly="1"/>
+                        <field name="due" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="remarks"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cashbook_entry_search" model="ir.ui.view">
+        <field name="name">cashbook.entry.search</field>
+        <field name="model">cashbook.entry</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="book_id"/>
+                <field name="business_id"/>
+                <field name="entry_type_id"/>
+                <field name="partner_id"/>
+                <field name="create_uid"/>
+                <filter name="today" string="Today" domain="[('entry_datetime', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('entry_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
+                <filter name="this_month" string="This Month" domain="[('entry_datetime', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <group>
+                    <filter name="group_business" string="Business" context="{'group_by': 'business_id'}"/>
+                    <filter name="group_book" string="Book" context="{'group_by': 'book_id'}"/>
+                    <filter name="group_entry_type" string="Entry Type" context="{'group_by': 'entry_type_id'}"/>
+                    <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'entry_datetime:day'}"/>
+                    <filter name="group_create_user" string="Create User" context="{'group_by': 'create_uid'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cashbook_entry" model="ir.actions.act_window">
+        <field name="name">Entries</field>
+        <field name="res_model">cashbook.entry</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
