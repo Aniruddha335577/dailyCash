@@ -19,7 +19,7 @@
     <menuitem id="menu_cashbook_entry"
               name="Entries"
               parent="menu_cashbook_root"
-              action="action_cashbook_entry"
+              action="action_cashbook_entry_ui"
               sequence="30"/>
 
     <menuitem id="menu_cashbook_partner"

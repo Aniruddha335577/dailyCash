@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_cashbook_entry_ui" model="ir.actions.client">
+        <field name="name">Entries</field>
+        <field name="tag">cashbook_entry_list</field>
+    </record>
+</odoo>

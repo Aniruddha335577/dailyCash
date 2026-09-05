@@ -5,7 +5,7 @@
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
     "author": "SoftoBRo",
-    "depends": ["base"],
+    "depends": ["web"],
     "data": [
         "security/ir.model.access.csv",
         "data/payment_method_data.xml",
@@ -14,9 +14,17 @@
         "views/entry_type_views.xml",
         "views/partner_views.xml",
         "views/entry_views.xml",
+        "views/entry_list_action.xml",
         "views/payment_method_views.xml",
         "views/menus.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "cashbook/static/src/**/*.js",
+            "cashbook/static/src/**/*.xml",
+            "cashbook/static/src/**/*.scss",
+        ],
+    },
     "installable": True,
     "application": True,
 }

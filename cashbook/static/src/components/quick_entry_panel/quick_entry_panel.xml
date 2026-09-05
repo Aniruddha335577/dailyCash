@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.QuickEntryPanel">
+        <aside class="cb-quick-panel">
+            <div class="cb-quick-toolbar">
+                <button type="button" class="btn btn-link cb-quick-close" t-on-click="close" title="Close">
+                    <i class="fa fa-times"/>
+                </button>
+                <span class="cb-quick-title" t-esc="title"/>
+                <button type="button" class="btn btn-primary btn-sm"
+                        t-att-disabled="state.saving"
+                        t-on-click="save">
+                    <t t-if="state.saving"><i class="fa fa-spinner fa-spin me-1"/></t>
+                    Save
+                </button>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="cb-quick-body cb-quick-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="cb-quick-body">
+                    <t t-if="isEdit">
+                        <button type="button" class="btn btn-link btn-sm cb-open-full p-0 mb-2" t-on-click="openFullForm">
+                            Open full form <i class="fa fa-external-link"/>
+                        </button>
+                    </t>
+
+                    <!-- Header fields (two-column) -->
+                    <div class="cb-quick-grid">
+                        <div class="cb-quick-field">
+                            <label class="cb-quick-label">Book</label>
+                            <select class="form-select form-select-sm" t-model="state.form.book_id" t-on-change="onBookChange">
+                                <option value="">—</option>
+                                <t t-foreach="props.books" t-as="book" t-key="book.id">
+                                    <option t-att-value="book.id" t-esc="book.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="cb-quick-field">
+                            <label class="cb-quick-label">Entry Type</label>
+                            <select class="form-select form-select-sm" t-model="state.form.entry_type_id">
+                                <option value="">—</option>
+                                <t t-foreach="props.entryTypes" t-as="et" t-key="et.id">
+                                    <option t-att-value="et.id" t-esc="et.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="cb-quick-field cb-quick-field-wide">
+                            <label class="cb-quick-label">Partner</label>
+                            <select class="form-select form-select-sm" t-model="state.form.partner_id">
+                                <option value="">—</option>
+                                <t t-foreach="state.partners" t-as="p" t-key="p.id">
+                                    <option t-att-value="p.id">
+                                        <t t-esc="p.name"/> (<t t-esc="p.partner_type"/>)
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="cb-quick-field">
+                            <label class="cb-quick-label">Date / Time</label>
+                            <input type="datetime-local" class="form-control form-control-sm"
+                                   t-model="state.form.entry_datetime"/>
+                        </div>
+                        <div class="cb-quick-field cb-quick-field-wide">
+                            <label class="cb-quick-label">Remarks</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   placeholder="Notes..." t-model="state.form.remarks"/>
+                        </div>
+                    </div>
+
+                    <!-- Lines -->
+                    <div class="cb-quick-section">
+                        <div class="cb-quick-section-head">
+                            <span class="fw-semibold">Entry Lines</span>
+                            <button type="button" class="btn btn-link btn-sm p-0" t-on-click="addLine">
+                                <i class="fa fa-plus me-1"/> Add line
+                            </button>
+                        </div>
+                        <t t-foreach="state.form.lines" t-as="line" t-key="line_index">
+                            <t t-if="!line._deleted">
+                                <div class="cb-quick-line card mb-2">
+                                    <div class="cb-quick-line-head">
+                                        <span class="text-muted small">Line <t t-esc="line_index + 1"/></span>
+                                        <button type="button" class="btn btn-link btn-sm text-danger p-0"
+                                                t-on-click="() => this.removeLine(line_index)">
+                                            <i class="fa fa-trash"/>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm mb-2"
+                                           placeholder="Item name *" t-model="line.product_name"/>
+                                    <div class="row g-2">
+                                        <div class="col-4">
+                                            <label class="cb-quick-label">Price</label>
+                                            <input type="number" min="0" step="0.01"
+                                                   class="form-control form-control-sm"
+                                                   t-model.number="line.product_price"/>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="cb-quick-label">Qty</label>
+                                            <input type="number" min="0.01" step="0.01"
+                                                   class="form-control form-control-sm"
+                                                   t-model.number="line.quantity"/>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="cb-quick-label">UoM</label>
+                                            <input type="text" class="form-control form-control-sm"
+                                                   t-model="line.uom"/>
+                                        </div>
+                                    </div>
+                                    <div class="text-end mt-2 small fw-semibold text-muted">
+                                        Line total:
+                                        <span t-esc="formatMoney((line.product_price || 0) * (line.quantity || 0))"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+
+                    <!-- Payments -->
+                    <div class="cb-quick-section">
+                        <div class="cb-quick-section-head">
+                            <span class="fw-semibold">Payments</span>
+                            <button type="button" class="btn btn-link btn-sm p-0" t-on-click="addPayment">
+                                <i class="fa fa-plus me-1"/> Add payment
+                            </button>
+                        </div>
+                        <t t-if="!activePayments.length">
+                            <p class="text-muted small mb-0">No payments yet — entry will be fully due.</p>
+                        </t>
+                        <t t-foreach="state.form.payments" t-as="payment" t-key="payment_index">
+                            <t t-if="!payment._deleted">
+                                <div class="cb-quick-line card mb-2">
+                                    <div class="cb-quick-line-head">
+                                        <span class="text-muted small">Payment</span>
+                                        <button type="button" class="btn btn-link btn-sm text-danger p-0"
+                                                t-on-click="() => this.removePayment(payment_index)">
+                                            <i class="fa fa-trash"/>
+                                        </button>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <select class="form-select form-select-sm"
+                                                    t-model="payment.payment_method_id">
+                                                <option value="">Method</option>
+                                                <t t-foreach="state.paymentMethods" t-as="pm" t-key="pm.id">
+                                                    <option t-att-value="pm.id" t-esc="pm.name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" min="0.01" step="0.01"
+                                                   class="form-control form-control-sm"
+                                                   placeholder="Amount" t-model.number="payment.amount"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="datetime-local"
+                                                   class="form-control form-control-sm"
+                                                   t-model="payment.payment_datetime"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="cb-quick-totals">
+                        <div class="cb-quick-total-row">
+                            <span>Total</span>
+                            <span class="fw-bold" t-esc="formatMoney(lineTotal)"/>
+                        </div>
+                        <div class="cb-quick-total-row cb-text-paid">
+                            <span>Paid</span>
+                            <span class="fw-bold" t-esc="formatMoney(paidTotal)"/>
+                        </div>
+                        <div class="cb-quick-total-row cb-text-due">
+                            <span>Due</span>
+                            <span class="fw-bold" t-esc="formatMoney(dueTotal)"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </aside>
+    </t>
+
+</templates>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="cashbook.EntryList">
+        <div class="o_action o_cashbook_entry_list">
+            <Layout display="display">
+                <t t-set-slot="layout-buttons">
+                    <div class="o_cp_buttons d-flex gap-2">
+                        <button type="button" class="btn btn-primary" t-on-click="createEntry">
+                            <i class="fa fa-plus me-1"/> New Entry
+                        </button>
+                        <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
+                            Classic View
+                        </button>
+                    </div>
+                </t>
+
+                <div class="cb-entry-layout">
+                    <t t-if="state.quickEntry.open">
+                        <div class="cb-entry-backdrop" t-on-click="closeQuickEntry"/>
+                    </t>
+                    <div class="cb-entry-main">
+                <div class="cb-entry-page">
+                    <!-- Summary -->
+                    <div class="cb-summary-row">
+                        <div class="cb-stat-card">
+                            <div class="cb-stat-label">Total</div>
+                            <div class="cb-stat-value" t-esc="formatMoney(state.summary.total, state.entries[0]?.currency_id?.[0])"/>
+                        </div>
+                        <div class="cb-stat-card cb-stat-paid">
+                            <div class="cb-stat-label">Paid</div>
+                            <div class="cb-stat-value" t-esc="formatMoney(state.summary.paid, state.entries[0]?.currency_id?.[0])"/>
+                        </div>
+                        <div class="cb-stat-card cb-stat-due">
+                            <div class="cb-stat-label">Due</div>
+                            <div class="cb-stat-value" t-esc="formatMoney(state.summary.due, state.entries[0]?.currency_id?.[0])"/>
+                        </div>
+                        <div class="cb-stat-card cb-stat-count">
+                            <div class="cb-stat-label">Entries</div>
+                            <div class="cb-stat-value" t-esc="state.entries.length"/>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="cb-filter-panel card mb-3">
+                        <div class="cb-filter-row">
+                            <div class="cb-filter-field cb-filter-search">
+                                <label class="cb-filter-label">Search</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-search"/></span>
+                                    <input type="text" class="form-control" placeholder="Partner or remarks..."
+                                           t-model="state.filters.search"
+                                           t-on-keydown="onSearchKeydown"/>
+                                </div>
+                            </div>
+                            <div class="cb-filter-field">
+                                <label class="cb-filter-label">Book</label>
+                                <select class="form-select" t-model="state.filters.bookId" t-on-change="onFilterChange">
+                                    <option value="">All Books</option>
+                                    <t t-foreach="state.books" t-as="book" t-key="book.id">
+                                        <option t-att-value="book.id" t-esc="book.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="cb-filter-field">
+                                <label class="cb-filter-label">Entry Type</label>
+                                <select class="form-select" t-model="state.filters.entryTypeId" t-on-change="onFilterChange">
+                                    <option value="">All Types</option>
+                                    <t t-foreach="state.entryTypes" t-as="et" t-key="et.id">
+                                        <option t-att-value="et.id" t-esc="et.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="cb-filter-field">
+                                <label class="cb-filter-label">From</label>
+                                <input type="date" class="form-control" t-model="state.filters.dateFrom" t-on-change="onFilterChange"/>
+                            </div>
+                            <div class="cb-filter-field">
+                                <label class="cb-filter-label">To</label>
+                                <input type="date" class="form-control" t-model="state.filters.dateTo" t-on-change="onFilterChange"/>
+                            </div>
+                        </div>
+
+                        <div class="cb-chip-row">
+                            <span class="cb-chip-label">Partner</span>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'all' ? ' active' : '')"
+                                    t-on-click="() => this.setPartnerScope('all')">All</button>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'customer' ? ' active' : '')"
+                                    t-on-click="() => this.setPartnerScope('customer')">Customer</button>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'vendor' ? ' active' : '')"
+                                    t-on-click="() => this.setPartnerScope('vendor')">Vendor</button>
+
+                            <span class="cb-chip-sep"/>
+
+                            <span class="cb-chip-label">Payment</span>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'all' ? ' active' : '')"
+                                    t-on-click="() => this.setPaymentStatus('all')">All</button>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'paid' ? ' active' : '')"
+                                    t-on-click="() => this.setPaymentStatus('paid')">Paid</button>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'partial' ? ' active' : '')"
+                                    t-on-click="() => this.setPaymentStatus('partial')">Partial</button>
+                            <button type="button" t-att-class="'cb-chip' + (state.filters.paymentStatus === 'unpaid' ? ' active' : '')"
+                                    t-on-click="() => this.setPaymentStatus('unpaid')">Unpaid</button>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="cb-table-card card">
+                        <t t-if="state.loading">
+                            <div class="cb-empty-state">
+                                <i class="fa fa-spinner fa-spin fa-2x text-muted"/>
+                                <p class="mt-2 text-muted">Loading entries...</p>
+                            </div>
+                        </t>
+                        <t t-elif="!state.entries.length">
+                            <div class="cb-empty-state">
+                                <i class="fa fa-book fa-3x text-muted"/>
+                                <h5 class="mt-3">No entries found</h5>
+                                <p class="text-muted">Adjust filters or create your first cashbook entry.</p>
+                                <button type="button" class="btn btn-primary mt-2" t-on-click="createEntry">
+                                    <i class="fa fa-plus me-1"/> New Entry
+                                </button>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="table-responsive">
+                                <table class="table table-hover cb-entry-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date / Time</th>
+                                            <th>Book</th>
+                                            <th>Type</th>
+                                            <th>Partner</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-end">Paid</th>
+                                            <th class="text-end">Due</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.entries" t-as="entry" t-key="entry.id">
+                                            <tr class="cb-entry-row" t-on-click="() => this.openEntry(entry)">
+                                                <td class="cb-col-date">
+                                                    <span class="fw-semibold" t-esc="formatDate(entry.entry_datetime)"/>
+                                                </td>
+                                                <td t-esc="entry.book_id ? entry.book_id[1] : ''"/>
+                                                <td>
+                                                    <span class="cb-type-pill" t-esc="entry.entry_type_id ? entry.entry_type_id[1] : ''"/>
+                                                </td>
+                                                <td t-esc="entry.partner_id ? entry.partner_id[1] : '—'"/>
+                                                <td class="text-end fw-semibold cb-amount" t-esc="formatMoney(entry.total_amount, entry.currency_id[0])"/>
+                                                <td class="text-end cb-amount-paid" t-esc="formatMoney(entry.paid, entry.currency_id[0])"/>
+                                                <td class="text-end cb-amount-due" t-esc="formatMoney(entry.due, entry.currency_id[0])"/>
+                                                <td>
+                                                    <span t-att-class="'cb-badge ' + paymentStatus(entry).class"
+                                                          t-esc="paymentStatus(entry).label"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                    </div>
+                    <QuickEntryPanel t-if="state.quickEntry.open"
+                        t-key="state.quickEntry.entryId || 'new'"
+                        entryId="state.quickEntry.entryId"
+                        books="state.books"
+                        entryTypes="state.entryTypes"
+                        defaultBookId="state.filters.bookId"
+                        onClose.bind="closeQuickEntry"
+                        onSaved.bind="onQuickEntrySaved"
+                    />
+                </div>
+            </Layout>
+        </div>
+    </t>
+
+</templates>
