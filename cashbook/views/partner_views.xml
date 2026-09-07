@@ -39,8 +39,8 @@
             <search>
                 <field name="name"/>
                 <field name="phone"/>
-                <filter name="customer" string="Customers" domain="[('partner_type', 'in', ['customer', 'both'])]"/>
-                <filter name="vendor" string="Vendors" domain="[('partner_type', 'in', ['vendor', 'both'])]"/>
+                <filter name="customer" string="Customers" domain="[('partner_type', '=', 'customer')]"/>
+                <filter name="vendor" string="Vendors" domain="[('partner_type', '=', 'vendor')]"/>
                 <group>
                     <filter name="group_type" string="Type" context="{'group_by': 'partner_type'}"/>
                 </group>

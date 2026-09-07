@@ -24,6 +24,15 @@ class CashbookEntry(models.Model):
         required=True,
         ondelete="restrict",
     )
+    direction = fields.Selection(
+        selection=[
+            ("in", "Cash In"),
+            ("out", "Cash Out"),
+        ],
+        required=True,
+        default="in",
+        index=True,
+    )
     partner_id = fields.Many2one("cashbook.partner")
     entry_datetime = fields.Datetime(
         required=True,

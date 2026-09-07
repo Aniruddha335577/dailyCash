@@ -28,11 +28,11 @@
                             <div class="cb-stat-value" t-esc="formatMoney(state.summary.total, state.entries[0]?.currency_id?.[0])"/>
                         </div>
                         <div class="cb-stat-card cb-stat-paid">
-                            <div class="cb-stat-label">Paid</div>
+                            <div class="cb-stat-label" t-esc="summaryLabels.settled"/>
                             <div class="cb-stat-value" t-esc="formatMoney(state.summary.paid, state.entries[0]?.currency_id?.[0])"/>
                         </div>
                         <div class="cb-stat-card cb-stat-due">
-                            <div class="cb-stat-label">Due</div>
+                            <div class="cb-stat-label" t-esc="summaryLabels.outstanding"/>
                             <div class="cb-stat-value" t-esc="formatMoney(state.summary.due, state.entries[0]?.currency_id?.[0])"/>
                         </div>
                         <div class="cb-stat-card cb-stat-count">
@@ -133,6 +133,17 @@
 
                         <div class="cb-filter-quick">
                             <div class="cb-filter-quick-group">
+                                <span class="cb-chip-label">Direction</span>
+                                <div class="cb-chip-group">
+                                    <button type="button" t-att-class="'cb-chip' + (state.filters.direction === 'all' ? ' active' : '')"
+                                            t-on-click="() => this.setDirection('all')">All</button>
+                                    <button type="button" t-att-class="'cb-chip cb-chip-in' + (state.filters.direction === 'in' ? ' active' : '')"
+                                            t-on-click="() => this.setDirection('in')">Cash In</button>
+                                    <button type="button" t-att-class="'cb-chip cb-chip-out' + (state.filters.direction === 'out' ? ' active' : '')"
+                                            t-on-click="() => this.setDirection('out')">Cash Out</button>
+                                </div>
+                            </div>
+                            <div class="cb-filter-quick-group">
                                 <span class="cb-chip-label">Partner type</span>
                                 <div class="cb-chip-group">
                                     <button type="button" t-att-class="'cb-chip' + (state.filters.partnerScope === 'all' ? ' active' : '')"
@@ -183,12 +194,13 @@
                                     <thead>
                                         <tr>
                                             <th>Date / Time</th>
+                                            <th>Direction</th>
                                             <th>Book</th>
                                             <th>Type</th>
                                             <th>Partner</th>
                                             <th class="text-end">Total</th>
-                                            <th class="text-end">Paid</th>
-                                            <th class="text-end">Due</th>
+                                            <th class="text-end" t-esc="summaryLabels.settled"/>
+                                            <th class="text-end" t-esc="summaryLabels.outstanding"/>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -197,6 +209,10 @@
                                             <tr class="cb-entry-row" t-on-click="() => this.openEntry(entry)">
                                                 <td class="cb-col-date">
                                                     <span class="fw-semibold" t-esc="formatDate(entry.entry_datetime)"/>
+                                                </td>
+                                                <td>
+                                                    <span t-att-class="'cb-direction-pill ' + directionClass(entry.direction)"
+                                                          t-esc="directionLabel(entry.direction)"/>
                                                 </td>
                                                 <td t-esc="entry.book_id ? entry.book_id[1] : ''"/>
                                                 <td>

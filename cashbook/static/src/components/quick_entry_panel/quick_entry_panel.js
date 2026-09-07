@@ -5,6 +5,11 @@ import { Component, onWillStart, useState } from "@odoo/owl";
 import { serializeDateTime } from "@web/core/l10n/dates";
 import { useService } from "@web/core/utils/hooks";
 import { formatMonetary } from "@web/views/fields/formatters";
+import {
+    DIRECTION_OPTIONS,
+    entrySettlementLabels,
+    partnerTypeLabel,
+} from "../../utils/direction_labels";
 
 const { DateTime } = luxon;
 
@@ -109,8 +114,21 @@ export class QuickEntryPanel extends Component {
         return this.lineTotal - this.paidTotal;
     }
 
+    get settlementLabels() {
+        return entrySettlementLabels(this.state.form.direction);
+    }
+
+    get directionOptions() {
+        return DIRECTION_OPTIONS;
+    }
+
+    partnerTypeLabel(partnerType) {
+        return partnerTypeLabel(partnerType);
+    }
+
     _emptyForm() {
         return {
+            direction: "in",
             book_id: "",
             entry_type_id: "",
             partner_id: "",
@@ -161,7 +179,7 @@ export class QuickEntryPanel extends Component {
         const [entry] = await this.orm.read(
             "cashbook.entry",
             [entryId],
-            ["book_id", "entry_type_id", "partner_id", "entry_datetime", "remarks", "currency_id"]
+            ["book_id", "direction", "entry_type_id", "partner_id", "entry_datetime", "remarks", "currency_id"]
         );
         const [lines, payments] = await Promise.all([
             this.orm.searchRead(
@@ -178,6 +196,7 @@ export class QuickEntryPanel extends Component {
 
         this.state.currencyId = entry.currency_id ? entry.currency_id[0] : null;
         this.state.form = {
+            direction: entry.direction || "in",
             book_id: entry.book_id ? String(entry.book_id[0]) : "",
             entry_type_id: entry.entry_type_id ? String(entry.entry_type_id[0]) : "",
             partner_id: entry.partner_id ? String(entry.partner_id[0]) : "",
@@ -347,6 +366,7 @@ export class QuickEntryPanel extends Component {
         const entryDt = DateTime.fromISO(f.entry_datetime, { zone: "default" });
         return {
             book_id: parseInt(f.book_id, 10),
+            direction: f.direction,
             entry_type_id: parseInt(f.entry_type_id, 10),
             partner_id: f.partner_id ? parseInt(f.partner_id, 10) : false,
             entry_datetime: serializeDateTime(entryDt),

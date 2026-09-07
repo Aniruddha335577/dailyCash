@@ -143,9 +143,19 @@ class TestCashbook(TransactionCase):
             "name": "Vendor Co",
             "partner_type": "vendor",
         })
-        both = self.env["cashbook.partner"].create({
-            "name": "Both Co",
-            "partner_type": "both",
+        customer = self.env["cashbook.partner"].create({
+            "name": "Customer Co",
+            "partner_type": "customer",
         })
         self.assertEqual(vendor.partner_type, "vendor")
-        self.assertEqual(both.partner_type, "both")
+        self.assertEqual(customer.partner_type, "customer")
+
+    def test_entry_direction_defaults_to_cash_in(self):
+        entry = self._create_entry()
+        self.assertEqual(entry.direction, "in")
+
+    def test_cash_out_entry(self):
+        entry = self._create_entry()
+        entry.write({"direction": "out"})
+        self.assertEqual(entry.direction, "out")
+        self.assertEqual(entry.due, entry.total_amount)

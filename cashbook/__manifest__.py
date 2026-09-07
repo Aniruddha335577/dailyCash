@@ -1,6 +1,6 @@
 {
     "name": "CashBook",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
@@ -10,6 +10,7 @@
         "security/ir.model.access.csv",
         "data/cashbook_config.xml",
         "data/payment_method_data.xml",
+        "data/partner_migration.xml",
         "views/login_templates.xml",
         "views/business_views.xml",
         "views/book_views.xml",
@@ -35,4 +36,5 @@
     },
     "installable": True,
     "application": True,
+    "post_init_hook": "post_init_hook",
 }

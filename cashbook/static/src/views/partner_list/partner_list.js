@@ -8,12 +8,7 @@ import { Layout } from "@web/search/layout";
 import { standardActionServiceProps } from "@web/webclient/actions/action_service";
 import { formatMonetary } from "@web/views/fields/formatters";
 import { aggregateEntryStats } from "../../utils/entry_stats";
-
-const PARTNER_TYPE_LABELS = {
-    customer: _t("Customer"),
-    vendor: _t("Vendor"),
-    both: _t("Both"),
-};
+import { partnerTypeLabel } from "../../utils/direction_labels";
 
 export class CashbookPartnerList extends Component {
     static template = "cashbook.PartnerList";
@@ -45,9 +40,9 @@ export class CashbookPartnerList extends Component {
     get filteredPartners() {
         let list = this.state.partners;
         if (this.state.partnerType === "customer") {
-            list = list.filter((p) => ["customer", "both"].includes(p.partner_type));
+            list = list.filter((p) => p.partner_type === "customer");
         } else if (this.state.partnerType === "vendor") {
-            list = list.filter((p) => ["vendor", "both"].includes(p.partner_type));
+            list = list.filter((p) => p.partner_type === "vendor");
         }
         const term = this.state.search.trim().toLowerCase();
         if (!term) {
@@ -90,7 +85,7 @@ export class CashbookPartnerList extends Component {
     }
 
     partnerTypeLabel(partnerType) {
-        return PARTNER_TYPE_LABELS[partnerType] || partnerType;
+        return partnerTypeLabel(partnerType);
     }
 
     partnerTypeClass(partnerType) {
@@ -100,9 +95,6 @@ export class CashbookPartnerList extends Component {
     partnerIconClass(partnerType) {
         if (partnerType === "vendor") {
             return "cb-entity-icon-vendor";
-        }
-        if (partnerType === "both") {
-            return "cb-entity-icon-both";
         }
         return "cb-entity-icon-customer";
     }

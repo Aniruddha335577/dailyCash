@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="entry_datetime"/>
+                <field name="direction"/>
                 <field name="book_id"/>
                 <field name="business_id" optional="show"/>
                 <field name="entry_type_id"/>
@@ -28,6 +29,7 @@
                         <group>
                             <field name="book_id"/>
                             <field name="business_id" readonly="1"/>
+                            <field name="direction"/>
                             <field name="entry_type_id"/>
                             <field name="partner_id"/>
                         </group>
@@ -85,13 +87,17 @@
                 <field name="business_id"/>
                 <field name="entry_type_id"/>
                 <field name="partner_id"/>
+                <field name="direction"/>
                 <field name="create_uid"/>
+                <filter name="cash_in" string="Cash In" domain="[('direction', '=', 'in')]"/>
+                <filter name="cash_out" string="Cash Out" domain="[('direction', '=', 'out')]"/>
                 <filter name="today" string="Today" domain="[('entry_datetime', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('entry_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
                 <filter name="this_month" string="This Month" domain="[('entry_datetime', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
                 <group>
                     <filter name="group_business" string="Business" context="{'group_by': 'business_id'}"/>
                     <filter name="group_book" string="Book" context="{'group_by': 'book_id'}"/>
                     <filter name="group_entry_type" string="Entry Type" context="{'group_by': 'entry_type_id'}"/>
+                    <filter name="group_direction" string="Direction" context="{'group_by': 'direction'}"/>
                     <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
                     <filter name="group_date" string="Date" context="{'group_by': 'entry_datetime:day'}"/>
                     <filter name="group_create_user" string="Create User" context="{'group_by': 'create_uid'}"/>

@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class CashbookPartner(models.Model):
@@ -11,7 +11,6 @@ class CashbookPartner(models.Model):
         selection=[
             ("customer", "Customer"),
             ("vendor", "Vendor"),
-            ("both", "Both"),
         ],
         required=True,
         default="customer",
@@ -19,3 +18,10 @@ class CashbookPartner(models.Model):
     phone = fields.Char()
     notes = fields.Text()
     active = fields.Boolean(default=True)
+
+    @api.model
+    def _migrate_legacy_types(self):
+        """Convert removed 'both' partner type to customer."""
+        self.env.cr.execute(
+            "UPDATE cashbook_partner SET partner_type = 'customer' WHERE partner_type = 'both'"
+        )

@@ -31,6 +31,18 @@
 
                     <!-- Header fields (two-column) -->
                     <div class="cb-quick-grid">
+                        <div class="cb-quick-field cb-quick-field-wide">
+                            <label class="cb-quick-label">Direction</label>
+                            <div class="cb-direction-toggle">
+                                <t t-foreach="directionOptions" t-as="opt" t-key="opt.value">
+                                    <button type="button"
+                                            t-att-class="'cb-direction-btn cb-direction-btn-' + opt.value + (state.form.direction === opt.value ? ' active' : '')"
+                                            t-on-click="() => state.form.direction = opt.value">
+                                        <t t-esc="opt.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
                         <div class="cb-quick-field">
                             <label class="cb-quick-label">Book</label>
                             <select class="form-select form-select-sm" t-model="state.form.book_id" t-on-change="onBookChange">
@@ -55,7 +67,7 @@
                                 <option value="">—</option>
                                 <t t-foreach="state.partners" t-as="p" t-key="p.id">
                                     <option t-att-value="p.id">
-                                        <t t-esc="p.name"/> (<t t-esc="p.partner_type"/>)
+                                        <t t-esc="p.name"/> (<t t-esc="partnerTypeLabel(p.partner_type)"/>)
                                     </option>
                                 </t>
                             </select>
@@ -120,22 +132,22 @@
                         </t>
                     </div>
 
-                    <!-- Payments -->
+                    <!-- Payments / Receipts -->
                     <div class="cb-quick-section">
                         <div class="cb-quick-section-head">
-                            <span class="fw-semibold">Payments</span>
+                            <span class="fw-semibold" t-esc="settlementLabels.paymentsSection"/>
                             <button type="button" class="btn btn-link btn-sm p-0" t-on-click="addPayment">
-                                <i class="fa fa-plus me-1"/> Add payment
+                                <i class="fa fa-plus me-1"/> <t t-esc="settlementLabels.addPayment"/>
                             </button>
                         </div>
                         <t t-if="!activePayments.length">
-                            <p class="text-muted small mb-0">No payments yet — entry will be fully due.</p>
+                            <p class="text-muted small mb-0" t-esc="settlementLabels.noPaymentsHint"/>
                         </t>
                         <t t-foreach="state.form.payments" t-as="payment" t-key="payment_index">
                             <t t-if="!payment._deleted">
                                 <div class="cb-quick-line card mb-2">
                                     <div class="cb-quick-line-head">
-                                        <span class="text-muted small">Payment</span>
+                                        <span class="text-muted small" t-esc="settlementLabels.settled"/>
                                         <button type="button" class="btn btn-link btn-sm text-danger p-0"
                                                 t-on-click="() => this.removePayment(payment_index)">
                                             <i class="fa fa-trash"/>
@@ -174,11 +186,11 @@
                             <span class="fw-bold" t-esc="formatMoney(lineTotal)"/>
                         </div>
                         <div class="cb-quick-total-row cb-text-paid">
-                            <span>Paid</span>
+                            <span t-esc="settlementLabels.settled"/>
                             <span class="fw-bold" t-esc="formatMoney(paidTotal)"/>
                         </div>
                         <div class="cb-quick-total-row cb-text-due">
-                            <span>Due</span>
+                            <span t-esc="settlementLabels.outstanding"/>
                             <span class="fw-bold" t-esc="formatMoney(dueTotal)"/>
                         </div>
                     </div>

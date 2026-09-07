@@ -9,6 +9,12 @@ import { standardActionServiceProps } from "@web/webclient/actions/action_servic
 import { deserializeDateTime, toLocaleDateTimeString } from "@web/core/l10n/dates";
 import { formatMonetary } from "@web/views/fields/formatters";
 import { QuickEntryPanel } from "../../components/quick_entry_panel/quick_entry_panel";
+import {
+    directionClass,
+    directionLabel,
+    entrySettlementLabels,
+    settlementLabels,
+} from "../../utils/direction_labels";
 
 export class CashbookEntryList extends Component {
     static template = "cashbook.EntryList";
@@ -39,6 +45,7 @@ export class CashbookEntryList extends Component {
                     ? String(ctx.default_payment_method_id)
                     : "",
                 partnerScope: ctx.default_partner_scope || "all",
+                direction: ctx.default_direction || "all",
                 paymentStatus: "all",
                 dateFrom: "",
                 dateTo: "",
@@ -85,9 +92,12 @@ export class CashbookEntryList extends Component {
             ]);
         }
         if (f.partnerScope === "customer") {
-            domain.push(["partner_id.partner_type", "in", ["customer", "both"]]);
+            domain.push(["partner_id.partner_type", "=", "customer"]);
         } else if (f.partnerScope === "vendor") {
-            domain.push(["partner_id.partner_type", "in", ["vendor", "both"]]);
+            domain.push(["partner_id.partner_type", "=", "vendor"]);
+        }
+        if (f.direction === "in" || f.direction === "out") {
+            domain.push(["direction", "=", f.direction]);
         }
         if (f.dateFrom) {
             domain.push(["entry_datetime", ">=", `${f.dateFrom} 00:00:00`]);
@@ -138,6 +148,7 @@ export class CashbookEntryList extends Component {
         const domain = this.getDomain();
         const fields = [
             "entry_datetime",
+            "direction",
             "book_id",
             "entry_type_id",
             "partner_id",
@@ -185,6 +196,23 @@ export class CashbookEntryList extends Component {
         this.onFilterChange();
     }
 
+    setDirection(direction) {
+        this.state.filters.direction = direction;
+        this.onFilterChange();
+    }
+
+    get summaryLabels() {
+        return settlementLabels(this.state.filters.direction);
+    }
+
+    directionLabel(direction) {
+        return directionLabel(direction);
+    }
+
+    directionClass(direction) {
+        return directionClass(direction);
+    }
+
     get hasActiveFilters() {
         const f = this.state.filters;
         return Boolean(
@@ -197,6 +225,7 @@ export class CashbookEntryList extends Component {
                 f.dateFrom ||
                 f.dateTo ||
                 f.partnerScope !== "all" ||
+                f.direction !== "all" ||
                 f.paymentStatus !== "all"
         );
     }
@@ -209,6 +238,7 @@ export class CashbookEntryList extends Component {
             partnerId: "",
             paymentMethodId: "",
             partnerScope: "all",
+            direction: "all",
             paymentStatus: "all",
             dateFrom: "",
             dateTo: "",
@@ -229,13 +259,14 @@ export class CashbookEntryList extends Component {
     }
 
     paymentStatus(entry) {
+        const labels = entrySettlementLabels(entry.direction);
         if (!entry.paid) {
-            return { label: _t("Unpaid"), class: "cb-badge-unpaid" };
+            return { label: labels.statusNone, class: "cb-badge-unpaid" };
         }
         if (!entry.due) {
-            return { label: _t("Paid"), class: "cb-badge-paid" };
+            return { label: labels.statusComplete, class: "cb-badge-paid" };
         }
-        return { label: _t("Partial"), class: "cb-badge-partial" };
+        return { label: labels.statusPartial, class: "cb-badge-partial" };
     }
 
     openEntry(entry) {
