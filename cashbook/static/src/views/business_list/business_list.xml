@@ -25,6 +25,23 @@
                                        t-model="state.search"/>
                             </div>
                         </div>
+                        <div class="cb-view-toggle-wrap">
+                            <label class="cb-card-filter-label">View</label>
+                            <div class="cb-view-toggle">
+                                <button type="button"
+                                        t-att-class="'cb-view-btn' + (state.viewMode === 'grid' ? ' active' : '')"
+                                        title="Card view"
+                                        t-on-click="() => this.setViewMode('grid')">
+                                    <i class="fa fa-th-large"/>
+                                </button>
+                                <button type="button"
+                                        t-att-class="'cb-view-btn' + (state.viewMode === 'list' ? ' active' : '')"
+                                        title="List view"
+                                        t-on-click="() => this.setViewMode('list')">
+                                    <i class="fa fa-list"/>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <t t-if="state.loading">
@@ -41,6 +58,37 @@
                             <button type="button" class="btn btn-primary mt-2" t-on-click="createBusiness">
                                 <i class="fa fa-plus me-1"/> New Business
                             </button>
+                        </div>
+                    </t>
+                    <t t-elif="state.viewMode === 'list'">
+                        <div class="cb-entity-table-card card">
+                            <div class="table-responsive">
+                                <table class="table table-hover cb-entity-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Business</th>
+                                            <th>Currency</th>
+                                            <th class="text-end">Books</th>
+                                            <th class="text-end">Entries</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-end">Due</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="filteredBusinesses" t-as="business" t-key="business.id">
+                                            <t t-set="stats" t-value="businessStats(business)"/>
+                                            <tr class="cb-entity-row-clickable" t-on-click="() => this.openBusiness(business)">
+                                                <td class="fw-semibold" t-esc="business.name"/>
+                                                <td t-esc="business.currency_id ? business.currency_id[1] : '—'"/>
+                                                <td class="text-end" t-esc="bookCount(business)"/>
+                                                <td class="text-end" t-esc="stats.count"/>
+                                                <td class="text-end" t-esc="formatMoney(stats.total, business.currency_id[0])"/>
+                                                <td class="text-end cb-stat-due" t-esc="formatMoney(stats.due, business.currency_id[0])"/>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </t>
                     <t t-else="">

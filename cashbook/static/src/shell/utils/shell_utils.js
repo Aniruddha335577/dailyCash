@@ -3,7 +3,7 @@
 const MENU_ICONS = {
     "cashbook.menu_cashbook_business": "fa-building-o",
     "cashbook.menu_cashbook_book": "fa-book",
-    "cashbook.menu_cashbook_entry": "fa-list-alt",
+    "cashbook.menu_cashbook_entry": "fa-tachometer",
     "cashbook.menu_cashbook_partner": "fa-users",
     "cashbook.menu_cashbook_configuration": "fa-cog",
     "cashbook.menu_cashbook_entry_type": "fa-tags",

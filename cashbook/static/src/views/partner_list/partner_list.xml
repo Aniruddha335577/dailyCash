@@ -25,6 +25,23 @@
                                        t-model="state.search"/>
                             </div>
                         </div>
+                        <div class="cb-view-toggle-wrap">
+                            <label class="cb-card-filter-label">View</label>
+                            <div class="cb-view-toggle">
+                                <button type="button"
+                                        t-att-class="'cb-view-btn' + (state.viewMode === 'grid' ? ' active' : '')"
+                                        title="Card view"
+                                        t-on-click="() => this.setViewMode('grid')">
+                                    <i class="fa fa-th-large"/>
+                                </button>
+                                <button type="button"
+                                        t-att-class="'cb-view-btn' + (state.viewMode === 'list' ? ' active' : '')"
+                                        title="List view"
+                                        t-on-click="() => this.setViewMode('list')">
+                                    <i class="fa fa-list"/>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="cb-chip-row">
@@ -54,6 +71,40 @@
                             <button type="button" class="btn btn-primary mt-2" t-on-click="createPartner">
                                 <i class="fa fa-plus me-1"/> New Partner
                             </button>
+                        </div>
+                    </t>
+                    <t t-elif="state.viewMode === 'list'">
+                        <div class="cb-entity-table-card card">
+                            <div class="table-responsive">
+                                <table class="table table-hover cb-entity-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Partner</th>
+                                            <th>Type</th>
+                                            <th>Phone</th>
+                                            <th class="text-end">Entries</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-end">Due</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="filteredPartners" t-as="partner" t-key="partner.id">
+                                            <t t-set="stats" t-value="partnerStats(partner)"/>
+                                            <tr class="cb-entity-row-clickable" t-on-click="() => this.openPartner(partner)">
+                                                <td class="fw-semibold" t-esc="partner.name"/>
+                                                <td>
+                                                    <span t-att-class="'cb-type-badge ' + partnerTypeClass(partner.partner_type)"
+                                                          t-esc="partnerTypeLabel(partner.partner_type)"/>
+                                                </td>
+                                                <td t-esc="partner.phone || '—'"/>
+                                                <td class="text-end" t-esc="stats.count"/>
+                                                <td class="text-end" t-esc="formatMoney(stats.total, stats.currencyId)"/>
+                                                <td class="text-end cb-stat-due" t-esc="formatMoney(stats.due, stats.currencyId)"/>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </t>
                     <t t-else="">

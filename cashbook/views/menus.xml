@@ -17,10 +17,10 @@
               sequence="20"/>
 
     <menuitem id="menu_cashbook_entry"
-              name="Entries"
+              name="Dashboard"
               parent="menu_cashbook_root"
               action="action_cashbook_entry_ui"
-              sequence="30"/>
+              sequence="5"/>
 
     <menuitem id="menu_cashbook_partner"
               name="Partners"

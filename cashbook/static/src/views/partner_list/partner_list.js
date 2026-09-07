@@ -25,6 +25,7 @@ export class CashbookPartnerList extends Component {
             loading: true,
             search: "",
             partnerType: "all",
+            viewMode: "grid",
         });
 
         this.display = {
@@ -105,6 +106,10 @@ export class CashbookPartnerList extends Component {
 
     setPartnerType(partnerType) {
         this.state.partnerType = partnerType;
+    }
+
+    setViewMode(mode) {
+        this.state.viewMode = mode;
     }
 
     openPartner(partner) {

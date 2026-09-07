@@ -26,6 +26,7 @@ export class CashbookBookList extends Component {
             loading: true,
             search: "",
             businessId: ctx.default_business_id ? String(ctx.default_business_id) : "",
+            viewMode: "grid",
         });
 
         this.display = {
@@ -97,10 +98,8 @@ export class CashbookBookList extends Component {
         return formatMonetary(amount || 0, { currencyId });
     }
 
-    openBook(book) {
-        this.action.doAction("cashbook.action_cashbook_entry_ui", {
-            additionalContext: { default_book_id: book.id },
-        });
+    setViewMode(mode) {
+        this.state.viewMode = mode;
     }
 
     createBook() {

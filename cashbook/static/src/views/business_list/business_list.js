@@ -26,6 +26,7 @@ export class CashbookBusinessList extends Component {
             bookCounts: {},
             loading: true,
             search: "",
+            viewMode: "grid",
         });
 
         this.display = {
@@ -96,6 +97,10 @@ export class CashbookBusinessList extends Component {
 
     formatMoney(amount, currencyId) {
         return formatMonetary(amount || 0, { currencyId });
+    }
+
+    setViewMode(mode) {
+        this.state.viewMode = mode;
     }
 
     openBusiness(business) {
