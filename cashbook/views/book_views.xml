@@ -7,6 +7,8 @@
             <list>
                 <field name="name"/>
                 <field name="business_id"/>
+                <field name="phone_1" optional="show"/>
+                <field name="email" optional="show"/>
                 <field name="currency_id"/>
                 <field name="active"/>
             </list>
@@ -21,11 +23,18 @@
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <group>
-                        <field name="business_id"/>
-                        <field name="name"/>
-                        <field name="currency_id" readonly="1"/>
-                        <field name="description"/>
-                        <field name="active" invisible="1"/>
+                        <group>
+                            <field name="business_id"/>
+                            <field name="name"/>
+                            <field name="currency_id" readonly="1"/>
+                            <field name="description"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="phone_1" widget="phone"/>
+                            <field name="phone_2" widget="phone"/>
+                            <field name="email" widget="email"/>
+                        </group>
                     </group>
                 </sheet>
             </form>
@@ -39,6 +48,8 @@
             <search>
                 <field name="name"/>
                 <field name="business_id"/>
+                <field name="phone_1"/>
+                <field name="email"/>
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <group>
                     <filter name="group_business" string="Business" context="{'group_by': 'business_id'}"/>

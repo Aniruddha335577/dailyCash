@@ -47,12 +47,58 @@ class TestCashbook(TransactionCase):
         business = self.env["cashbook.business"].create({"name": "Default Currency Co"})
         self.assertTrue(business.currency_id)
 
+    def test_business_profile_fields(self):
+        business = self.env["cashbook.business"].create({
+            "name": "Acme Trading",
+            "legal_name": "Acme Trading Ltd.",
+            "address_line_1": "12 Market Street",
+            "address_line_2": "Floor 3",
+            "city": "Dhaka",
+            "zip": "1207",
+            "phone_1": "+8801712345678",
+            "phone_2": "+8801812345678",
+            "email": "hello@acme.test",
+            "website": "https://acme.test",
+            "tax_id": "VAT-123456",
+            "registration_number": "TRAD/2020/001",
+            "invoice_footer": "Thank you for your business.",
+        })
+        self.assertEqual(business.legal_name, "Acme Trading Ltd.")
+        self.assertEqual(business.email, "hello@acme.test")
+        self.assertEqual(business.tax_id, "VAT-123456")
+
+    def test_business_email_validation(self):
+        with self.assertRaises(ValidationError):
+            self.env["cashbook.business"].create({
+                "name": "Bad Email Co",
+                "email": "not-an-email",
+            })
+
     def test_unlimited_books_per_business(self):
         books = self.env["cashbook.book"].create([
             {"business_id": self.business.id, "name": f"Book {i}"}
             for i in range(5)
         ])
         self.assertEqual(len(books), 5)
+
+    def test_book_contact_fields(self):
+        book = self.env["cashbook.book"].create({
+            "business_id": self.business.id,
+            "name": "Branch Book",
+            "phone_1": "+8801712345678",
+            "phone_2": "+8801812345678",
+            "email": "branch@acme.test",
+        })
+        self.assertEqual(book.email, "branch@acme.test")
+        self.assertEqual(book.phone_1, "+8801712345678")
+
+    def test_book_email_validation(self):
+        with self.assertRaises(ValidationError):
+            self.env["cashbook.book"].create({
+                "business_id": self.business.id,
+                "name": "Bad Email Book",
+                "email": "not-an-email",
+            })
 
     def test_entry_line_total(self):
         entry = self._create_entry()

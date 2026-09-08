@@ -6,6 +6,10 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="phone_1" optional="show"/>
+                <field name="email" optional="show"/>
+                <field name="city" optional="hide"/>
+                <field name="country_id" optional="hide"/>
                 <field name="currency_id"/>
                 <field name="active"/>
             </list>
@@ -20,10 +24,42 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box"/>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="logo" widget="image" class="oe_avatar" options="{'preview_image': 'logo'}"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Business Name"/>
+                        </h1>
+                        <field name="legal_name" placeholder="Legal name (optional)"/>
+                    </div>
                     <group>
-                        <field name="name"/>
-                        <field name="currency_id"/>
-                        <field name="active" invisible="1"/>
+                        <group string="Contact">
+                            <field name="phone_1" widget="phone"/>
+                            <field name="phone_2" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="website" widget="url" placeholder="https://"/>
+                        </group>
+                        <group string="Address">
+                            <field name="address_line_1" placeholder="Street, building, area"/>
+                            <field name="address_line_2" placeholder="Suite, floor, landmark"/>
+                            <field name="city"/>
+                            <field name="state_id" domain="[('country_id', '=', country_id)]"/>
+                            <field name="zip"/>
+                            <field name="country_id"/>
+                        </group>
+                    </group>
+                    <group string="Legal &amp; Tax">
+                        <group>
+                            <field name="tax_id"/>
+                            <field name="registration_number"/>
+                        </group>
+                        <group>
+                            <field name="currency_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Invoice Defaults">
+                        <field name="invoice_footer" placeholder="Payment terms, bank details, or thank-you message for printed invoices."/>
                     </group>
                 </sheet>
             </form>
@@ -36,6 +72,12 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
+                <field name="legal_name"/>
+                <field name="phone_1"/>
+                <field name="phone_2"/>
+                <field name="email"/>
+                <field name="city"/>
+                <field name="tax_id"/>
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
             </search>

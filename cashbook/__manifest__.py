@@ -1,6 +1,6 @@
 {
     "name": "CashBook",
-    "version": "19.0.1.0.2",
+    "version": "19.0.1.0.4",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
