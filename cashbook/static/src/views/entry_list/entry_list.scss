@@ -354,6 +354,11 @@
         }
     }
 
+    .cb-col-ref {
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+
     .cb-col-date {
         white-space: nowrap;
     }

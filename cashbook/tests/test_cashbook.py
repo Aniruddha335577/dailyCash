@@ -159,3 +159,45 @@ class TestCashbook(TransactionCase):
         entry.write({"direction": "out"})
         self.assertEqual(entry.direction, "out")
         self.assertEqual(entry.due, entry.total_amount)
+
+    def test_entry_reference_auto_generated(self):
+        entry = self._create_entry()
+        self.assertTrue(entry.name)
+        self.assertNotIn(entry.name, ("New", "/"))
+        self.assertRegex(entry.name, r"^CB/\d{4}/\d+$")
+
+    def test_entry_references_are_unique(self):
+        first = self._create_entry()
+        second = self._create_entry()
+        self.assertNotEqual(first.name, second.name)
+
+    def test_backdated_entry_gets_reference(self):
+        past = datetime.now() - timedelta(days=45)
+        entry = self.env["cashbook.entry"].create({
+            "book_id": self.book.id,
+            "entry_type_id": self.entry_type.id,
+            "partner_id": self.partner.id,
+            "entry_datetime": past,
+            "line_ids": [(0, 0, {
+                "product_name": "Backdated item",
+                "product_price": 100,
+                "quantity": 1,
+            })],
+        })
+        self.assertTrue(entry.name)
+        self.assertRegex(entry.name, r"^CB/\d{4}/\d+$")
+        self.assertEqual(entry.entry_datetime.date(), past.date())
+
+    def test_entry_reference_cannot_be_changed(self):
+        entry = self._create_entry()
+        original = entry.name
+        entry.write({"name": "CB/2099/99999"})
+        self.assertEqual(entry.name, original)
+
+    def test_assign_missing_references_backfills_placeholders(self):
+        entry = self._create_entry()
+        entry.with_context(allow_entry_name_update=True).write({"name": "New"})
+        self.env["cashbook.entry"]._assign_missing_references()
+        entry.invalidate_recordset(["name"])
+        self.assertNotEqual(entry.name, "New")
+        self.assertRegex(entry.name, r"^CB/\d{4}/\d+$")

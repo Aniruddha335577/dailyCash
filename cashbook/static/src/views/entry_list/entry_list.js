@@ -107,7 +107,13 @@ export class CashbookEntryList extends Component {
         }
         if (f.search.trim()) {
             const term = f.search.trim();
-            domain.push("|", ["remarks", "ilike", term], ["partner_id.name", "ilike", term]);
+            domain.push(
+                "|",
+                "|",
+                ["name", "ilike", term],
+                ["remarks", "ilike", term],
+                ["partner_id.name", "ilike", term]
+            );
         }
         if (f.paymentStatus === "paid") {
             domain.push(["due", "=", 0], ["paid", ">", 0]);
@@ -147,6 +153,7 @@ export class CashbookEntryList extends Component {
         this.state.loading = true;
         const domain = this.getDomain();
         const fields = [
+            "name",
             "entry_datetime",
             "direction",
             "book_id",

@@ -61,7 +61,7 @@
                                 <i class="fa fa-search cb-filter-search-icon"/>
                                 <input type="text"
                                        class="form-control cb-filter-search-input"
-                                       placeholder="Search partner or remarks..."
+                                       placeholder="Search reference, partner, or remarks..."
                                        t-model="state.filters.search"
                                        t-on-keydown="onSearchKeydown"/>
                             </div>
@@ -193,6 +193,7 @@
                                 <table class="table table-hover cb-entry-table mb-0">
                                     <thead>
                                         <tr>
+                                            <th>Reference</th>
                                             <th>Date / Time</th>
                                             <th>Direction</th>
                                             <th>Book</th>
@@ -207,6 +208,7 @@
                                     <tbody>
                                         <t t-foreach="state.entries" t-as="entry" t-key="entry.id">
                                             <tr class="cb-entry-row" t-on-click="() => this.openEntry(entry)">
+                                                <td class="fw-semibold cb-col-ref" t-esc="entry.name"/>
                                                 <td class="cb-col-date">
                                                     <span class="fw-semibold" t-esc="formatDate(entry.entry_datetime)"/>
                                                 </td>

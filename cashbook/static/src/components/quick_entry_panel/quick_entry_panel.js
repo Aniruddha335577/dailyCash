@@ -88,6 +88,9 @@ export class QuickEntryPanel extends Component {
     }
 
     get title() {
+        if (this.isEdit && this.state.form.name) {
+            return this.state.form.name;
+        }
         return this.isEdit ? _t("Edit Entry") : _t("New Entry");
     }
 
@@ -128,6 +131,7 @@ export class QuickEntryPanel extends Component {
 
     _emptyForm() {
         return {
+            name: "",
             direction: "in",
             book_id: "",
             entry_type_id: "",
@@ -179,7 +183,7 @@ export class QuickEntryPanel extends Component {
         const [entry] = await this.orm.read(
             "cashbook.entry",
             [entryId],
-            ["book_id", "direction", "entry_type_id", "partner_id", "entry_datetime", "remarks", "currency_id"]
+            ["book_id", "direction", "entry_type_id", "partner_id", "entry_datetime", "remarks", "currency_id", "name"]
         );
         const [lines, payments] = await Promise.all([
             this.orm.searchRead(
@@ -196,6 +200,7 @@ export class QuickEntryPanel extends Component {
 
         this.state.currencyId = entry.currency_id ? entry.currency_id[0] : null;
         this.state.form = {
+            name: entry.name || "",
             direction: entry.direction || "in",
             book_id: entry.book_id ? String(entry.book_id[0]) : "",
             entry_type_id: entry.entry_type_id ? String(entry.entry_type_id[0]) : "",

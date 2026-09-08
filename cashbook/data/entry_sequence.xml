@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_cashbook_entry" model="ir.sequence">
+        <field name="name">CashBook Entry</field>
+        <field name="code">cashbook.entry</field>
+        <field name="prefix">HB/</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -5,6 +5,7 @@
         <field name="model">cashbook.entry</field>
         <field name="arch" type="xml">
             <list>
+                <field name="name"/>
                 <field name="entry_datetime"/>
                 <field name="direction"/>
                 <field name="book_id"/>
@@ -25,6 +26,11 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
                             <field name="book_id"/>
@@ -83,6 +89,7 @@
         <field name="model">cashbook.entry</field>
         <field name="arch" type="xml">
             <search>
+                <field name="name"/>
                 <field name="book_id"/>
                 <field name="business_id"/>
                 <field name="entry_type_id"/>
