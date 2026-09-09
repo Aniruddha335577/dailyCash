@@ -144,10 +144,10 @@
                             <t t-if="line.uom"> <span t-esc="line.uom"/></t>
                         </td>
                         <td class="text-end">
-                            <span t-field="line.product_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            <span t-esc="doc.format_report_amount(line.product_price)"/>
                         </td>
                         <td class="text-end">
-                            <span t-field="line.total_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            <span t-esc="doc.format_report_amount(line.total_price)"/>
                         </td>
                     </tr>
                 </tbody>
@@ -161,19 +161,19 @@
                 <t t-if="template.show_amount">
                     <div class="cb-amount-row">
                         <span>Total</span>
-                        <strong t-field="doc.total_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        <strong t-esc="doc.format_report_amount(doc.total_amount)"/>
                     </div>
                 </t>
                 <t t-if="template.show_paid">
                     <div class="cb-amount-row">
                         <span>Paid</span>
-                        <strong t-field="doc.paid" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        <strong t-esc="doc.format_report_amount(doc.paid)"/>
                     </div>
                 </t>
                 <t t-if="template.show_due">
                     <div class="cb-amount-row cb-amount-due">
                         <span>Due</span>
-                        <strong t-field="doc.due" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        <strong t-esc="doc.format_report_amount(doc.due)"/>
                     </div>
                 </t>
             </div>

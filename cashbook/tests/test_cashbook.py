@@ -302,3 +302,12 @@ class TestCashbook(TransactionCase):
                 "name": "Bad Color",
                 "primary_color": "not-a-color",
             })
+
+    def test_format_report_amount_uses_currency_code(self):
+        bdt = self.env.ref("base.BDT")
+        self.business.write({"currency_id": bdt.id})
+        entry = self._create_entry()
+        formatted = entry.format_report_amount(900)
+        self.assertIn("BDT", formatted)
+        self.assertNotIn("৳", formatted)
+        self.assertRegex(formatted, r"900(\.00)? BDT")

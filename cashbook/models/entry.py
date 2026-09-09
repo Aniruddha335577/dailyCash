@@ -1,5 +1,6 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools.misc import formatLang
 
 
 class CashbookEntry(models.Model):
@@ -146,6 +147,17 @@ class CashbookEntry(models.Model):
         self.ensure_one()
         methods = self.payment_ids.mapped("payment_method_id.name")
         return ", ".join(dict.fromkeys(filter(None, methods)))
+
+    def format_report_amount(self, amount):
+        """Format amount with currency code (e.g. 900.00 BDT) for PDF reports."""
+        self.ensure_one()
+        currency = self.currency_id
+        decimal_places = currency.decimal_places if currency else 2
+        currency_code = currency.name if currency else ""
+        formatted = formatLang(self.env, amount or 0.0, digits=decimal_places)
+        if currency_code:
+            return f"{formatted} {currency_code}"
+        return formatted
 
     def action_print_invoice(self):
         self.ensure_one()
