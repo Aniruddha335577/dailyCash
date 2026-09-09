@@ -127,7 +127,7 @@ export class CashbookEntryList extends Component {
 
     async loadFilterOptions() {
         const [books, businesses, entryTypes, partners, paymentMethods] = await Promise.all([
-            this.orm.searchRead("cashbook.book", [], ["id", "name"], { order: "name" }),
+            this.orm.searchRead("cashbook.book", [], ["id", "name", "business_id"], { order: "name" }),
             this.orm.searchRead("cashbook.business", [["active", "=", true]], ["id", "name"], {
                 order: "name",
             }),
@@ -156,6 +156,7 @@ export class CashbookEntryList extends Component {
             "name",
             "entry_datetime",
             "direction",
+            "business_id",
             "book_id",
             "entry_type_id",
             "partner_id",

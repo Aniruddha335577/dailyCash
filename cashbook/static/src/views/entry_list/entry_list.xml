@@ -196,6 +196,7 @@
                                             <th>Reference</th>
                                             <th>Date / Time</th>
                                             <th>Direction</th>
+                                            <th>Business</th>
                                             <th>Book</th>
                                             <th>Type</th>
                                             <th>Partner</th>
@@ -216,6 +217,7 @@
                                                     <span t-att-class="'cb-direction-pill ' + directionClass(entry.direction)"
                                                           t-esc="directionLabel(entry.direction)"/>
                                                 </td>
+                                                <td t-esc="entry.business_id ? entry.business_id[1] : '—'"/>
                                                 <td t-esc="entry.book_id ? entry.book_id[1] : ''"/>
                                                 <td>
                                                     <span class="cb-type-pill" t-esc="entry.entry_type_id ? entry.entry_type_id[1] : ''"/>

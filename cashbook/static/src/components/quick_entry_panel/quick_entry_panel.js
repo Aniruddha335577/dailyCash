@@ -78,6 +78,7 @@ export class QuickEntryPanel extends Component {
                 await this._loadEntry(this.props.entryId);
             } else {
                 this._applyDefaults();
+                await this._updateBusinessFromBook();
             }
             this.state.loading = false;
         });
@@ -133,6 +134,8 @@ export class QuickEntryPanel extends Component {
         return {
             name: "",
             direction: "in",
+            business_id: "",
+            business_name: "",
             book_id: "",
             entry_type_id: "",
             partner_id: "",
@@ -141,6 +144,10 @@ export class QuickEntryPanel extends Component {
             lines: [defaultLine()],
             payments: [],
         };
+    }
+
+    optionValue(id) {
+        return id != null && id !== false ? String(id) : "";
     }
 
     _applyDefaults() {
@@ -157,7 +164,7 @@ export class QuickEntryPanel extends Component {
         if (this.props.defaultPartnerId) {
             this.state.form.partner_id = String(this.props.defaultPartnerId);
         }
-        this._updateCurrencyFromBook();
+        this._updateBusinessFromBook();
     }
 
     async _loadOptions() {
@@ -183,7 +190,17 @@ export class QuickEntryPanel extends Component {
         const [entry] = await this.orm.read(
             "cashbook.entry",
             [entryId],
-            ["book_id", "direction", "entry_type_id", "partner_id", "entry_datetime", "remarks", "currency_id", "name"]
+            [
+                "book_id",
+                "business_id",
+                "direction",
+                "entry_type_id",
+                "partner_id",
+                "entry_datetime",
+                "remarks",
+                "currency_id",
+                "name",
+            ]
         );
         const [lines, payments] = await Promise.all([
             this.orm.searchRead(
@@ -202,6 +219,8 @@ export class QuickEntryPanel extends Component {
         this.state.form = {
             name: entry.name || "",
             direction: entry.direction || "in",
+            business_id: entry.business_id ? String(entry.business_id[0]) : "",
+            business_name: entry.business_id ? entry.business_id[1] : "",
             book_id: entry.book_id ? String(entry.book_id[0]) : "",
             entry_type_id: entry.entry_type_id ? String(entry.entry_type_id[0]) : "",
             partner_id: entry.partner_id ? String(entry.partner_id[0]) : "",
@@ -229,16 +248,23 @@ export class QuickEntryPanel extends Component {
         };
     }
 
-    async _updateCurrencyFromBook() {
+    async _updateBusinessFromBook() {
         const bookId = parseInt(this.state.form.book_id, 10);
         if (!bookId) {
+            this.state.form.business_id = "";
+            this.state.form.business_name = "";
             this.state.currencyId = null;
             return;
         }
         const [book] = await this.orm.read("cashbook.book", [bookId], ["business_id"]);
         if (!book?.business_id) {
+            this.state.form.business_id = "";
+            this.state.form.business_name = "";
+            this.state.currencyId = null;
             return;
         }
+        this.state.form.business_id = String(book.business_id[0]);
+        this.state.form.business_name = book.business_id[1];
         const [business] = await this.orm.read(
             "cashbook.business",
             [book.business_id[0]],
@@ -248,7 +274,7 @@ export class QuickEntryPanel extends Component {
     }
 
     async onBookChange() {
-        await this._updateCurrencyFromBook();
+        await this._updateBusinessFromBook();
     }
 
     addLine() {
@@ -405,16 +431,16 @@ export class QuickEntryPanel extends Component {
         }
     }
 
-    openFullForm() {
-        if (this.isEdit) {
-            this.action.doAction({
-                type: "ir.actions.act_window",
-                res_model: "cashbook.entry",
-                res_id: this.props.entryId,
-                views: [[false, "form"]],
-                target: "current",
-            });
+    async downloadInvoice() {
+        if (!this.props.entryId) {
+            return;
         }
+        await this.action.doAction("cashbook.action_report_cashbook_entry", {
+            additionalContext: {
+                active_model: "cashbook.entry",
+                active_ids: [this.props.entryId],
+            },
+        });
     }
 
     close() {

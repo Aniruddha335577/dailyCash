@@ -188,7 +188,7 @@
 
     .cb-filter-grid {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 0.75rem;
         padding: 1rem 1.1rem;
         border-bottom: 1px solid #f1f5f9;
@@ -481,6 +481,15 @@
         width: 100%;
         max-width: 420px;
     }
+}
+
+.cb-quick-toolbar-actions {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.cb-quick-readonly {
+    min-height: calc(1.5em + 0.5rem + 2px);
 }
 
 .cb-quick-toolbar {

@@ -8,12 +8,20 @@
                     <i class="fa fa-times"/>
                 </button>
                 <span class="cb-quick-title" t-esc="title"/>
-                <button type="button" class="btn btn-primary btn-sm"
-                        t-att-disabled="state.saving"
-                        t-on-click="save">
-                    <t t-if="state.saving"><i class="fa fa-spinner fa-spin me-1"/></t>
-                    Save
-                </button>
+                <div class="cb-quick-toolbar-actions d-flex gap-2">
+                    <t t-if="isEdit">
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                t-on-click="downloadInvoice">
+                            <i class="fa fa-download me-1"/> Invoice
+                        </button>
+                    </t>
+                    <button type="button" class="btn btn-primary btn-sm"
+                            t-att-disabled="state.saving"
+                            t-on-click="save">
+                        <t t-if="state.saving"><i class="fa fa-spinner fa-spin me-1"/></t>
+                        Save
+                    </button>
+                </div>
             </div>
 
             <t t-if="state.loading">
@@ -23,14 +31,12 @@
             </t>
             <t t-else="">
                 <div class="cb-quick-body">
-                    <t t-if="isEdit">
-                        <button type="button" class="btn btn-link btn-sm cb-open-full p-0 mb-2" t-on-click="openFullForm">
-                            Open full form <i class="fa fa-external-link"/>
-                        </button>
-                    </t>
-
-                    <!-- Header fields (two-column) -->
                     <div class="cb-quick-grid">
+                        <div class="cb-quick-field cb-quick-field-wide">
+                            <label class="cb-quick-label">Business</label>
+                            <div class="form-control form-control-sm bg-light cb-quick-readonly"
+                                 t-esc="state.form.business_name || '—'"/>
+                        </div>
                         <div class="cb-quick-field cb-quick-field-wide">
                             <label class="cb-quick-label">Direction</label>
                             <div class="cb-direction-toggle">
@@ -48,7 +54,7 @@
                             <select class="form-select form-select-sm" t-model="state.form.book_id" t-on-change="onBookChange">
                                 <option value="">—</option>
                                 <t t-foreach="props.books" t-as="book" t-key="book.id">
-                                    <option t-att-value="book.id" t-esc="book.name"/>
+                                    <option t-att-value="optionValue(book.id)" t-esc="book.name"/>
                                 </t>
                             </select>
                         </div>
@@ -57,7 +63,7 @@
                             <select class="form-select form-select-sm" t-model="state.form.entry_type_id">
                                 <option value="">—</option>
                                 <t t-foreach="props.entryTypes" t-as="et" t-key="et.id">
-                                    <option t-att-value="et.id" t-esc="et.name"/>
+                                    <option t-att-value="optionValue(et.id)" t-esc="et.name"/>
                                 </t>
                             </select>
                         </div>
@@ -66,7 +72,7 @@
                             <select class="form-select form-select-sm" t-model="state.form.partner_id">
                                 <option value="">—</option>
                                 <t t-foreach="state.partners" t-as="p" t-key="p.id">
-                                    <option t-att-value="p.id">
+                                    <option t-att-value="optionValue(p.id)">
                                         <t t-esc="p.name"/> (<t t-esc="partnerTypeLabel(p.partner_type)"/>)
                                     </option>
                                 </t>
@@ -84,7 +90,6 @@
                         </div>
                     </div>
 
-                    <!-- Lines -->
                     <div class="cb-quick-section">
                         <div class="cb-quick-section-head">
                             <span class="fw-semibold">Entry Lines</span>
@@ -132,7 +137,6 @@
                         </t>
                     </div>
 
-                    <!-- Payments / Receipts -->
                     <div class="cb-quick-section">
                         <div class="cb-quick-section-head">
                             <span class="fw-semibold" t-esc="settlementLabels.paymentsSection"/>
@@ -159,7 +163,7 @@
                                                     t-model="payment.payment_method_id">
                                                 <option value="">Method</option>
                                                 <t t-foreach="state.paymentMethods" t-as="pm" t-key="pm.id">
-                                                    <option t-att-value="pm.id" t-esc="pm.name"/>
+                                                    <option t-att-value="optionValue(pm.id)" t-esc="pm.name"/>
                                                 </t>
                                             </select>
                                         </div>
@@ -179,7 +183,6 @@
                         </t>
                     </div>
 
-                    <!-- Totals -->
                     <div class="cb-quick-totals">
                         <div class="cb-quick-total-row">
                             <span>Total</span>
