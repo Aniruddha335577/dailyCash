@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_cashbook_entry" model="ir.actions.report">
+        <field name="name">Invoice</field>
+        <field name="model">cashbook.entry</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">cashbook.report_entry</field>
+        <field name="report_file">cashbook.report_entry</field>
+        <field name="print_report_name">'Invoice-%s' % (object.name.replace('/', '-'))</field>
+        <field name="binding_model_id" ref="model_cashbook_entry"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_entry_branding">
+        <t t-set="business" t-value="doc.get_report_business()"/>
+        <div t-attf-class="cb-branding cb-align-#{template.header_alignment}">
+            <div class="cb-branding-row">
+                <t t-if="template.show_logo and business.logo">
+                    <img class="cb-logo" t-att-src="image_data_uri(business.logo)" alt="Logo"/>
+                </t>
+                <div class="cb-branding-text">
+                    <t t-if="template.show_company_name and business.name">
+                        <div class="cb-company-name" t-esc="business.name"/>
+                    </t>
+                    <t t-if="template.show_legal_name and business.legal_name">
+                        <div class="cb-legal-name" t-esc="business.legal_name"/>
+                    </t>
+                    <t t-if="template.show_address">
+                        <t t-foreach="business._get_report_address_lines()" t-as="line">
+                            <div class="cb-address-line" t-esc="line"/>
+                        </t>
+                    </t>
+                    <t t-if="template.show_phone">
+                        <t t-if="business.phone_1">
+                            <div class="cb-contact-line"><span t-esc="business.phone_1"/></div>
+                        </t>
+                        <t t-if="business.phone_2">
+                            <div class="cb-contact-line"><span t-esc="business.phone_2"/></div>
+                        </t>
+                    </t>
+                    <t t-if="template.show_email and business.email">
+                        <div class="cb-contact-line" t-esc="business.email"/>
+                    </t>
+                    <t t-if="template.show_website and business.website">
+                        <div class="cb-contact-line" t-esc="business.website"/>
+                    </t>
+                    <t t-if="template.show_tax_id and business.tax_id">
+                        <div class="cb-contact-line">Tax ID: <span t-esc="business.tax_id"/></div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_entry_meta">
+        <div class="cb-meta-grid">
+            <t t-if="template.show_invoice_number">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Invoice Number</span>
+                    <span class="cb-meta-value" t-esc="doc.name"/>
+                </div>
+            </t>
+            <t t-if="template.show_entry_number">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Entry Number</span>
+                    <span class="cb-meta-value" t-esc="doc.id"/>
+                </div>
+            </t>
+            <t t-if="template.show_date">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Date</span>
+                    <span class="cb-meta-value" t-field="doc.entry_datetime" t-options='{"widget": "datetime"}'/>
+                </div>
+            </t>
+            <t t-if="template.show_partner">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Partner</span>
+                    <span class="cb-meta-value" t-esc="doc.partner_id.name or '—'"/>
+                </div>
+            </t>
+            <t t-if="template.show_book">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Book</span>
+                    <span class="cb-meta-value" t-esc="doc.book_id.name"/>
+                </div>
+            </t>
+            <t t-if="template.show_entry_type">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Entry Type</span>
+                    <span class="cb-meta-value" t-esc="doc.entry_type_id.name"/>
+                </div>
+            </t>
+            <t t-if="template.show_reference">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Reference</span>
+                    <span class="cb-meta-value" t-esc="doc.name"/>
+                </div>
+            </t>
+            <t t-if="template.show_money_direction">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Direction</span>
+                    <span class="cb-meta-value">
+                        <t t-if="doc.direction == 'in'">Cash In</t>
+                        <t t-else="">Cash Out</t>
+                    </span>
+                </div>
+            </t>
+            <t t-if="template.show_payment_method">
+                <div class="cb-meta-item">
+                    <span class="cb-meta-label">Payment Method</span>
+                    <span class="cb-meta-value" t-esc="doc.get_payment_method_labels() or '—'"/>
+                </div>
+            </t>
+            <t t-if="template.show_description and doc.remarks">
+                <div class="cb-meta-item cb-meta-item-wide">
+                    <span class="cb-meta-label">Description</span>
+                    <span class="cb-meta-value" t-esc="doc.remarks"/>
+                </div>
+            </t>
+        </div>
+    </template>
+
+    <template id="report_entry_lines">
+        <t t-if="template.show_line_items and doc.line_ids">
+            <table class="cb-lines-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th class="text-end">Qty</th>
+                        <th class="text-end">Unit Price</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="doc.line_ids" t-as="line">
+                        <td>
+                            <div t-esc="line.product_name"/>
+                            <t t-if="line.description">
+                                <div class="cb-line-desc" t-esc="line.description"/>
+                            </t>
+                        </td>
+                        <td class="text-end">
+                            <span t-esc="line.quantity"/>
+                            <t t-if="line.uom"> <span t-esc="line.uom"/></t>
+                        </td>
+                        <td class="text-end">
+                            <span t-field="line.product_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </td>
+                        <td class="text-end">
+                            <span t-field="line.total_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </t>
+    </template>
+
+    <template id="report_entry_amounts">
+        <t t-if="template.show_amount or template.show_paid or template.show_due">
+            <div class="cb-amounts">
+                <t t-if="template.show_amount">
+                    <div class="cb-amount-row">
+                        <span>Total</span>
+                        <strong t-field="doc.total_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                    </div>
+                </t>
+                <t t-if="template.show_paid">
+                    <div class="cb-amount-row">
+                        <span>Paid</span>
+                        <strong t-field="doc.paid" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                    </div>
+                </t>
+                <t t-if="template.show_due">
+                    <div class="cb-amount-row cb-amount-due">
+                        <span>Due</span>
+                        <strong t-field="doc.due" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_entry_document">
+        <t t-set="template" t-value="doc.get_effective_report_template()"/>
+        <t t-if="not template">
+            <div class="cb-report-error">No report template configured.</div>
+        </t>
+        <t t-else="">
+            <div t-attf-class="cb-report cb-layout-#{template.layout}"
+                 t-attf-style="--cb-primary: #{template.primary_color};">
+                <style>
+                    @page {
+                        size: <t t-esc="template.page_size.upper()"/>;
+                        margin-top: <t t-esc="template.margin_top"/>mm;
+                        margin-bottom: <t t-esc="template.margin_bottom"/>mm;
+                        margin-left: <t t-esc="template.margin_left"/>mm;
+                        margin-right: <t t-esc="template.margin_right"/>mm;
+                    }
+                    .cb-report { color: #1f2937; font-size: 12px; }
+                    .cb-report .cb-branding-row { display: flex; gap: 16px; align-items: flex-start; }
+                    .cb-report .cb-logo { max-height: 72px; max-width: 120px; object-fit: contain; }
+                    .cb-report .cb-company-name { font-size: 18px; font-weight: 700; color: var(--cb-primary); }
+                    .cb-report .cb-legal-name { font-size: 12px; color: #6b7280; }
+                    .cb-report .cb-address-line, .cb-report .cb-contact-line { font-size: 11px; color: #4b5563; }
+                    .cb-report .cb-header-text { margin: 16px 0 12px; font-size: 13px; }
+                    .cb-report .cb-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; color: var(--cb-primary); }
+                    .cb-report .cb-meta-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin-bottom: 16px; }
+                    .cb-report .cb-meta-item-wide { grid-column: 1 / -1; }
+                    .cb-report .cb-meta-label { display: block; font-size: 10px; text-transform: uppercase; color: #6b7280; }
+                    .cb-report .cb-meta-value { display: block; font-weight: 600; }
+                    .cb-report .cb-lines-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+                    .cb-report .cb-lines-table th, .cb-report .cb-lines-table td { border-bottom: 1px solid #e5e7eb; padding: 8px 6px; }
+                    .cb-report .cb-lines-table th { background: #f9fafb; text-align: left; font-size: 10px; text-transform: uppercase; color: #6b7280; }
+                    .cb-report .cb-line-desc { font-size: 10px; color: #6b7280; }
+                    .cb-report .cb-amounts { margin-top: 16px; margin-left: auto; width: 260px; }
+                    .cb-report .cb-amount-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e5e7eb; }
+                    .cb-report .cb-amount-due strong { color: var(--cb-primary); }
+                    .cb-report .cb-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #6b7280; }
+                    .cb-report .cb-align-left { text-align: left; }
+                    .cb-report .cb-align-center { text-align: center; }
+                    .cb-report .cb-align-right { text-align: right; }
+                    .cb-layout-modern .cb-title { font-size: 24px; border-bottom: 3px solid var(--cb-primary); padding-bottom: 8px; }
+                    .cb-layout-classic .cb-branding { border-bottom: 1px solid #d1d5db; padding-bottom: 12px; margin-bottom: 12px; }
+                    .cb-layout-simple .cb-branding { margin-bottom: 8px; }
+                </style>
+
+                <t t-call="cashbook.report_entry_branding"/>
+
+                <t t-if="template.header_text">
+                    <div t-attf-class="cb-header-text cb-align-#{template.header_alignment}" t-esc="template.header_text"/>
+                </t>
+
+                <h1 class="cb-title">Invoice</h1>
+
+                <t t-call="cashbook.report_entry_meta"/>
+                <t t-call="cashbook.report_entry_lines"/>
+                <t t-call="cashbook.report_entry_amounts"/>
+
+                <t t-set="footer_text" t-value="doc.get_report_footer_text(template)"/>
+                <t t-if="footer_text or template.show_page_number">
+                    <div t-attf-class="cb-footer cb-align-#{template.footer_alignment}">
+                        <t t-if="footer_text">
+                            <div t-esc="footer_text"/>
+                        </t>
+                        <t t-if="template.show_page_number">
+                            <div>Page <span class="page"/> / <span class="topage"/></div>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_entry">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <t t-call="cashbook.report_entry_document"/>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

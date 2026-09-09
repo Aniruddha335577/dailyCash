@@ -1,6 +1,6 @@
 {
     "name": "CashBook",
-    "version": "19.0.1.0.5",
+    "version": "19.0.1.0.7",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
@@ -13,6 +13,8 @@
         "data/currency_data.xml",
         "data/entry_sequence.xml",
         "data/partner_migration.xml",
+        "data/report_template_data.xml",
+        "report/entry_report.xml",
         "views/login_templates.xml",
         "views/business_views.xml",
         "views/book_views.xml",
@@ -23,6 +25,7 @@
         "views/entry_list_action.xml",
         "views/card_list_actions.xml",
         "views/payment_method_views.xml",
+        "views/report_template_views.xml",
         "views/menus.xml",
     ],
     "assets": {

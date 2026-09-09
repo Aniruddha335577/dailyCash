@@ -53,6 +53,21 @@ class CashbookBusiness(models.Model):
     active = fields.Boolean(default=True)
     book_ids = fields.One2many("cashbook.book", "business_id")
 
+    def _get_report_address_lines(self):
+        """Return formatted address lines for PDF reports."""
+        self.ensure_one()
+        lines = []
+        if self.address_line_1:
+            lines.append(self.address_line_1)
+        if self.address_line_2:
+            lines.append(self.address_line_2)
+        city_parts = [part for part in [self.city, self.state_id.name, self.zip] if part]
+        if city_parts:
+            lines.append(", ".join(city_parts))
+        if self.country_id:
+            lines.append(self.country_id.name)
+        return lines
+
     @api.model
     def _ensure_cashbook_currencies(self):
         """Activate currencies commonly used in CashBook (BDT ships inactive in Odoo base)."""

@@ -7,3 +7,4 @@ access_cashbook_entry_user,cashbook.entry.user,model_cashbook_entry,base.group_u
 access_cashbook_entry_line_user,cashbook.entry.line.user,model_cashbook_entry_line,base.group_user,1,1,1,1
 access_cashbook_payment_method_user,cashbook.payment.method.user,model_cashbook_payment_method,base.group_user,1,1,1,1
 access_cashbook_payment_user,cashbook.payment.user,model_cashbook_payment,base.group_user,1,1,1,1
+access_cashbook_report_template_user,cashbook.report.template.user,model_cashbook_report_template,base.group_user,1,1,1,1

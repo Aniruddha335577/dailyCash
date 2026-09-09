@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cashbook_report_template_list" model="ir.ui.view">
+        <field name="name">cashbook.report.template.list</field>
+        <field name="model">cashbook.report.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="layout"/>
+                <field name="page_size"/>
+                <field name="is_default"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cashbook_report_template_form" model="ir.ui.view">
+        <field name="name">cashbook.report.template.form</field>
+        <field name="model">cashbook.report.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_preview" type="object" string="Preview" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Template Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="layout"/>
+                            <field name="is_default"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="page_size"/>
+                            <field name="primary_color" widget="color"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Branding" name="branding">
+                            <group string="Business Branding (from related Business)">
+                                <group>
+                                    <field name="show_logo"/>
+                                    <field name="show_company_name"/>
+                                    <field name="show_legal_name"/>
+                                    <field name="show_address"/>
+                                </group>
+                                <group>
+                                    <field name="show_phone"/>
+                                    <field name="show_email"/>
+                                    <field name="show_website"/>
+                                    <field name="show_tax_id"/>
+                                </group>
+                            </group>
+                            <p class="text-muted">
+                                Logo, business name, address, phone, and email are loaded from the
+                                related <strong>cashbook.business</strong> record when the invoice is downloaded.
+                            </p>
+                        </page>
+                        <page string="Header" name="header">
+                            <group>
+                                <field name="header_text"/>
+                                <field name="header_alignment"/>
+                            </group>
+                        </page>
+                        <page string="Entry Information" name="entry_info">
+                            <group>
+                                <group string="Document">
+                                    <field name="show_invoice_number"/>
+                                    <field name="show_entry_number"/>
+                                    <field name="show_date"/>
+                                    <field name="show_reference"/>
+                                    <field name="show_description"/>
+                                </group>
+                                <group string="Relations">
+                                    <field name="show_partner"/>
+                                    <field name="show_book"/>
+                                    <field name="show_entry_type"/>
+                                    <field name="show_payment_method"/>
+                                    <field name="show_money_direction"/>
+                                </group>
+                            </group>
+                            <group string="Amounts &amp; Lines">
+                                <group>
+                                    <field name="show_line_items"/>
+                                    <field name="show_amount"/>
+                                </group>
+                                <group>
+                                    <field name="show_paid"/>
+                                    <field name="show_due"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Footer" name="footer">
+                            <group>
+                                <field name="footer_text" placeholder="Leave empty to use the business invoice footer."/>
+                                <field name="footer_alignment"/>
+                                <field name="show_page_number"/>
+                            </group>
+                        </page>
+                        <page string="Appearance" name="appearance">
+                            <group>
+                                <group>
+                                    <field name="margin_top"/>
+                                    <field name="margin_bottom"/>
+                                </group>
+                                <group>
+                                    <field name="margin_left"/>
+                                    <field name="margin_right"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cashbook_report_template_search" model="ir.ui.view">
+        <field name="name">cashbook.report.template.search</field>
+        <field name="model">cashbook.report.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="default" string="Default" domain="[('is_default', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cashbook_report_template" model="ir.actions.act_window">
+        <field name="name">Report Templates</field>
+        <field name="res_model">cashbook.report.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

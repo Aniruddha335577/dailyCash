@@ -72,6 +72,11 @@ class CashbookEntry(models.Model):
     )
     remarks = fields.Text()
     create_uid = fields.Many2one("res.users", readonly=True)
+    report_template_id = fields.Many2one(
+        "cashbook.report.template",
+        string="Report Template",
+        ondelete="set null",
+    )
 
     _name_unique = models.Constraint(
         "unique(name)",
@@ -105,12 +110,46 @@ class CashbookEntry(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        default_template = self.env["cashbook.report.template"]._get_default_template()
         for vals in vals_list:
             if self._needs_generated_reference(vals.get("name")):
                 vals["name"] = self._generate_entry_reference()
+            if not vals.get("report_template_id") and default_template:
+                vals["report_template_id"] = default_template.id
         records = super().create(vals_list)
         records._check_has_lines()
         return records
+
+    def get_effective_report_template(self):
+        self.ensure_one()
+        forced_id = self.env.context.get("force_report_template_id")
+        if forced_id:
+            template = self.env["cashbook.report.template"].browse(forced_id)
+            if template.exists() and template.active:
+                return template
+        if self.report_template_id and self.report_template_id.active:
+            return self.report_template_id
+        return self.env["cashbook.report.template"]._get_default_template()
+
+    def get_report_business(self):
+        self.ensure_one()
+        return self.business_id
+
+    def get_report_footer_text(self, template):
+        self.ensure_one()
+        if template and template.footer_text:
+            return template.footer_text
+        business = self.business_id
+        return business.invoice_footer or ""
+
+    def get_payment_method_labels(self):
+        self.ensure_one()
+        methods = self.payment_ids.mapped("payment_method_id.name")
+        return ", ".join(dict.fromkeys(filter(None, methods)))
+
+    def action_print_invoice(self):
+        self.ensure_one()
+        return self.env.ref("cashbook.action_report_cashbook_entry").report_action(self)
 
     def write(self, vals):
         if not self.env.context.get("allow_entry_name_update"):

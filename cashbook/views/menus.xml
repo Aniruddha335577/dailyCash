@@ -45,4 +45,10 @@
               parent="menu_cashbook_configuration"
               action="action_cashbook_payment_method_ui"
               sequence="20"/>
+
+    <menuitem id="menu_cashbook_report_template"
+              name="Report Templates"
+              parent="menu_cashbook_configuration"
+              action="action_cashbook_report_template_ui"
+              sequence="30"/>
 </odoo>

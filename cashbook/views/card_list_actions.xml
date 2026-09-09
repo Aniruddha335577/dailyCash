@@ -31,4 +31,10 @@
         <field name="tag">cashbook_configuration_list</field>
         <field name="context">{'default_section': 'payment_methods'}</field>
     </record>
+
+    <record id="action_cashbook_report_template_ui" model="ir.actions.client">
+        <field name="name">Report Templates</field>
+        <field name="tag">cashbook_configuration_list</field>
+        <field name="context">{'default_section': 'report_templates'}</field>
+    </record>
 </odoo>

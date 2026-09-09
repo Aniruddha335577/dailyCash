@@ -8,6 +8,7 @@ const MENU_ICONS = {
     "cashbook.menu_cashbook_configuration": "fa-cog",
     "cashbook.menu_cashbook_entry_type": "fa-tags",
     "cashbook.menu_cashbook_payment_method": "fa-credit-card",
+    "cashbook.menu_cashbook_report_template": "fa-file-text-o",
 };
 
 export function isCashbookApp(menuService) {

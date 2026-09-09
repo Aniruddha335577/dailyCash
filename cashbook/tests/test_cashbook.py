@@ -259,3 +259,46 @@ class TestCashbook(TransactionCase):
         entry.invalidate_recordset(["name"])
         self.assertNotEqual(entry.name, "New")
         self.assertRegex(entry.name, r"^CB/\d{4}/\d+$")
+
+    def test_report_template_default_is_unique(self):
+        default = self.env.ref("cashbook.report_template_default")
+        with self.assertRaises(ValidationError):
+            self.env["cashbook.report.template"].create({
+                "name": "Another Default",
+                "is_default": True,
+            })
+        self.assertTrue(default.is_default)
+
+    def test_entry_gets_default_report_template(self):
+        entry = self._create_entry()
+        default = self.env["cashbook.report.template"]._get_default_template()
+        self.assertTrue(default)
+        self.assertEqual(entry.report_template_id, default)
+
+    def test_report_business_branding_from_related_business(self):
+        self.business.write({
+            "logo": False,
+            "address_line_1": "12 Market Street",
+            "city": "Dhaka",
+            "phone_1": "+8801712345678",
+            "email": "hello@acme.test",
+        })
+        entry = self._create_entry()
+        business = entry.get_report_business()
+        self.assertEqual(business, self.business)
+        lines = business._get_report_address_lines()
+        self.assertIn("12 Market Street", lines)
+        self.assertIn("Dhaka", lines[1])
+
+    def test_effective_report_template_fallback(self):
+        entry = self._create_entry()
+        entry.report_template_id = False
+        default = self.env["cashbook.report.template"]._get_default_template()
+        self.assertEqual(entry.get_effective_report_template(), default)
+
+    def test_report_template_color_validation(self):
+        with self.assertRaises(ValidationError):
+            self.env["cashbook.report.template"].create({
+                "name": "Bad Color",
+                "primary_color": "not-a-color",
+            })
