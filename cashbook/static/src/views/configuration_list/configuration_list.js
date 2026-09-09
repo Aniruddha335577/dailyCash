@@ -133,14 +133,22 @@ export class CashbookConfigurationList extends Component {
     }
 
     openEntryType(entryType) {
-        this.action.doAction("cashbook.action_cashbook_entry_ui", {
-            additionalContext: { default_entry_type_id: entryType.id },
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "cashbook.entry.type",
+            res_id: entryType.id,
+            views: [[false, "form"]],
+            target: "current",
         });
     }
 
     openPaymentMethod(paymentMethod) {
-        this.action.doAction("cashbook.action_cashbook_entry_ui", {
-            additionalContext: { default_payment_method_id: paymentMethod.id },
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "cashbook.payment.method",
+            res_id: paymentMethod.id,
+            views: [[false, "form"]],
+            target: "current",
         });
     }
 

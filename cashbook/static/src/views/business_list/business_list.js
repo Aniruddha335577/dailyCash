@@ -104,8 +104,12 @@ export class CashbookBusinessList extends Component {
     }
 
     openBusiness(business) {
-        this.action.doAction("cashbook.action_cashbook_book_ui", {
-            additionalContext: { default_business_id: business.id },
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "cashbook.business",
+            res_id: business.id,
+            views: [[false, "form"]],
+            target: "current",
         });
     }
 

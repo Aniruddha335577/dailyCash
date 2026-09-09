@@ -113,8 +113,12 @@ export class CashbookPartnerList extends Component {
     }
 
     openPartner(partner) {
-        this.action.doAction("cashbook.action_cashbook_entry_ui", {
-            additionalContext: { default_partner_id: partner.id },
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "cashbook.partner",
+            res_id: partner.id,
+            views: [[false, "form"]],
+            target: "current",
         });
     }
 

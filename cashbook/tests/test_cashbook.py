@@ -43,6 +43,18 @@ class TestCashbook(TransactionCase):
             vals["payment_ids"] = payments
         return self.env["cashbook.entry"].create(vals)
 
+    def test_bdt_currency_is_active(self):
+        bdt = self.env.ref("base.BDT")
+        self.assertTrue(bdt.active)
+
+    def test_business_can_use_bdt(self):
+        bdt = self.env.ref("base.BDT")
+        business = self.env["cashbook.business"].create({
+            "name": "BDT Business",
+            "currency_id": bdt.id,
+        })
+        self.assertEqual(business.currency_id, bdt)
+
     def test_business_currency_defaults_to_company(self):
         business = self.env["cashbook.business"].create({"name": "Default Currency Co"})
         self.assertTrue(business.currency_id)

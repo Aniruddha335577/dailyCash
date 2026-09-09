@@ -53,6 +53,14 @@ class CashbookBusiness(models.Model):
     active = fields.Boolean(default=True)
     book_ids = fields.One2many("cashbook.book", "business_id")
 
+    @api.model
+    def _ensure_cashbook_currencies(self):
+        """Activate currencies commonly used in CashBook (BDT ships inactive in Odoo base)."""
+        for xmlid in ("base.BDT",):
+            currency = self.env.ref(xmlid, raise_if_not_found=False)
+            if currency and not currency.active:
+                currency.active = True
+
     @api.onchange("country_id")
     def _onchange_country_id(self):
         if self.state_id and self.state_id.country_id != self.country_id:

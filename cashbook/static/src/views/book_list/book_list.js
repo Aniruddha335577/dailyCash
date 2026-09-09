@@ -102,6 +102,16 @@ export class CashbookBookList extends Component {
         this.state.viewMode = mode;
     }
 
+    openBook(book) {
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "cashbook.book",
+            res_id: book.id,
+            views: [[false, "form"]],
+            target: "current",
+        });
+    }
+
     createBook() {
         this.action.doAction({
             type: "ir.actions.act_window",

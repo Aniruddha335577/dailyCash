@@ -86,7 +86,7 @@
                                     <tbody>
                                         <t t-foreach="filteredBooks" t-as="book" t-key="book.id">
                                             <t t-set="stats" t-value="bookStats(book)"/>
-                                            <tr>
+                                            <tr class="cb-entity-row-clickable" t-on-click="() => this.openBook(book)">
                                                 <td class="fw-semibold" t-esc="book.name"/>
                                                 <td t-esc="book.business_id ? book.business_id[1] : '—'"/>
                                                 <td t-esc="book.currency_id ? book.currency_id[1] : '—'"/>
@@ -103,7 +103,7 @@
                     <t t-else="">
                         <div class="cb-card-grid">
                             <t t-foreach="filteredBooks" t-as="book" t-key="book.id">
-                                <div class="cb-entity-card cb-entity-card-static">
+                                <div class="cb-entity-card cb-entity-row-clickable" t-on-click="() => this.openBook(book)">
                                     <div class="cb-entity-card-head">
                                         <div class="cb-entity-icon cb-entity-icon-book">
                                             <i class="fa fa-book"/>
