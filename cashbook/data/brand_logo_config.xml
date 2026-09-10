@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <record id="config_cashbook_brand_logo" model="ir.config_parameter">
+        <field name="key">cashbook.brand_logo</field>
+        <field name="value">/cashbook/static/img/brand_logo.png</field>
+    </record>
+</odoo>

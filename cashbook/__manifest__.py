@@ -9,6 +9,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/cashbook_config.xml",
+        "data/brand_logo_config.xml",
         "data/payment_method_data.xml",
         "data/currency_data.xml",
         "data/entry_sequence.xml",

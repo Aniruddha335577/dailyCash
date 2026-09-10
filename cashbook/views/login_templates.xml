@@ -23,7 +23,7 @@
                 <aside class="cb-login-brand">
                     <div class="cb-login-brand-inner">
                         <t t-set="brand_name" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'HisabBro')"/>
-                        <t t-set="brand_logo" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_logo', '/cashbook/static/img/brand_logo.svg')"/>
+                        <t t-set="brand_logo" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_logo', '/cashbook/static/img/brand_logo.png')"/>
                         <img class="cb-login-logo-mark" t-att-src="brand_logo" t-att-alt="brand_name"/>
                         <h1 class="cb-login-product" t-esc="brand_name"/>
                         <p class="cb-login-tagline">
