@@ -43,6 +43,12 @@
                     </group>
                     <notebook>
                         <page string="Branding" name="branding">
+                            <group string="Platform Branding">
+                                <group>
+                                    <field name="show_saas_logo"/>
+                                    <field name="show_powered_by"/>
+                                </group>
+                            </group>
                             <group string="Business Branding (from related Business)">
                                 <group>
                                     <field name="show_logo"/>
@@ -100,7 +106,9 @@
                             <group>
                                 <field name="footer_text" placeholder="Leave empty to use the business invoice footer."/>
                                 <field name="footer_alignment"/>
+                                <field name="show_footer_contact"/>
                                 <field name="show_page_number"/>
+                                <field name="show_powered_by"/>
                             </group>
                         </page>
                         <page string="Appearance" name="appearance">

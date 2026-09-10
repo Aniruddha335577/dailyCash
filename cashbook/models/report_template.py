@@ -17,6 +17,9 @@ class CashbookReportTemplate(models.Model):
     is_default = fields.Boolean(string="Default Template", default=False)
 
     # Branding visibility (data comes from cashbook.business at render time)
+    show_saas_logo = fields.Boolean(string="SaaS Logo", default=True)
+    show_powered_by = fields.Boolean(string="Powered By Line", default=True)
+    show_footer_contact = fields.Boolean(string="Footer Contact", default=True)
     show_logo = fields.Boolean(default=True)
     show_company_name = fields.Boolean(default=True)
     show_legal_name = fields.Boolean(default=True)
@@ -91,7 +94,7 @@ class CashbookReportTemplate(models.Model):
             ("classic", "Classic"),
             ("modern", "Modern"),
         ],
-        default="simple",
+        default="classic",
         required=True,
     )
 

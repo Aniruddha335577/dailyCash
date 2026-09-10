@@ -148,6 +148,10 @@ class CashbookEntry(models.Model):
         methods = self.payment_ids.mapped("payment_method_id.name")
         return ", ".join(dict.fromkeys(filter(None, methods)))
 
+    def get_report_direction_label(self):
+        self.ensure_one()
+        return _("Cash In") if self.direction == "in" else _("Cash Out")
+
     def format_report_amount(self, amount):
         """Format amount with currency code (e.g. 900.00 BDT) for PDF reports."""
         self.ensure_one()

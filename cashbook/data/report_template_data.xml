@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
     <record id="report_template_default" model="cashbook.report.template">
-        <field name="name">Default Invoice</field>
+        <field name="name">Professional Default</field>
         <field name="sequence">1</field>
         <field name="is_default" eval="True"/>
         <field name="layout">classic</field>
         <field name="primary_color">#2563eb</field>
+        <field name="show_saas_logo" eval="True"/>
+        <field name="show_powered_by" eval="True"/>
+        <field name="show_footer_contact" eval="True"/>
+        <field name="show_logo" eval="True"/>
+        <field name="show_company_name" eval="True"/>
+        <field name="show_address" eval="True"/>
+        <field name="show_phone" eval="True"/>
+        <field name="show_email" eval="True"/>
         <field name="show_invoice_number" eval="True"/>
         <field name="show_date" eval="True"/>
         <field name="show_partner" eval="True"/>
         <field name="show_book" eval="True"/>
         <field name="show_entry_type" eval="True"/>
+        <field name="show_reference" eval="False"/>
+        <field name="show_description" eval="True"/>
+        <field name="show_payment_method" eval="True"/>
+        <field name="show_money_direction" eval="True"/>
         <field name="show_line_items" eval="True"/>
         <field name="show_amount" eval="True"/>
         <field name="show_paid" eval="True"/>

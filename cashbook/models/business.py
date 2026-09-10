@@ -68,6 +68,18 @@ class CashbookBusiness(models.Model):
             lines.append(self.country_id.name)
         return lines
 
+    def get_report_contact_parts(self):
+        """Phone/email lines for report footers."""
+        self.ensure_one()
+        parts = []
+        if self.phone_1:
+            parts.append(self.phone_1)
+        if self.phone_2:
+            parts.append(self.phone_2)
+        if self.email:
+            parts.append(self.email)
+        return parts
+
     @api.model
     def _ensure_cashbook_currencies(self):
         """Activate currencies commonly used in CashBook (BDT ships inactive in Odoo base)."""
