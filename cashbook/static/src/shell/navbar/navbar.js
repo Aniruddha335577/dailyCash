@@ -7,6 +7,7 @@ import { useState } from "@odoo/owl";
 import { CashbookGlobalSearch } from "../global_search/global_search";
 import { CashbookQuickCreate } from "../quick_create/quick_create";
 import { CashbookMobileMenu } from "../mobile_menu/mobile_menu";
+import { BRAND_LOGO_URL, BRAND_NAME } from "../../utils/brand";
 import { isCashbookApp } from "../utils/shell_utils";
 
 const ALLOWED_SYSTRAY_KEYS = new Set(["web.user_menu"]);
@@ -17,6 +18,8 @@ patch(NavBar.prototype, {
         this.cbState = useState({
             mobileMenuOpen: false,
         });
+        this.brandName = BRAND_NAME;
+        this.brandLogoUrl = BRAND_LOGO_URL;
     },
 
     get useCashbookShell() {

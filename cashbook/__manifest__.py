@@ -1,5 +1,5 @@
 {
-    "name": "CashBook",
+    "name": "HisabBro",
     "version": "19.0.1.0.7",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",

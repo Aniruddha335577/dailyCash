@@ -10,7 +10,10 @@
             <Transition name="'cb-mobile-menu-panel'" visible="props.open" leaveDuration="200" t-slot-scope="transition">
                 <aside t-if="props.open" t-att-class="'cb-mobile-menu-panel ' + (transition.className || '')">
                     <div class="cb-mobile-menu-head">
-                        <span class="fw-bold">CashBook</span>
+                        <div class="cb-mobile-menu-brand">
+                            <img class="cb-mobile-menu-logo" t-att-src="brandLogoUrl" t-att-alt="brandName"/>
+                            <span class="fw-bold" t-esc="brandName"/>
+                        </div>
                         <button type="button" class="btn btn-link text-reset p-0" t-on-click="props.onClose">
                             <i class="fa fa-times"/>
                         </button>

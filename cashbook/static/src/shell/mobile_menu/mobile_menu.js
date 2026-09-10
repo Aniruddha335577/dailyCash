@@ -2,6 +2,7 @@
 
 import { Component } from "@odoo/owl";
 import { Transition } from "@web/core/transition";
+import { BRAND_LOGO_URL, BRAND_NAME } from "../../utils/brand";
 import { getMenuIcon } from "../utils/shell_utils";
 
 export class CashbookMobileMenu extends Component {
@@ -13,6 +14,11 @@ export class CashbookMobileMenu extends Component {
         onClose: Function,
         onSelectMenu: Function,
     };
+
+    setup() {
+        this.brandName = BRAND_NAME;
+        this.brandLogoUrl = BRAND_LOGO_URL;
+    }
 
     getIcon(menu) {
         return getMenuIcon(menu);

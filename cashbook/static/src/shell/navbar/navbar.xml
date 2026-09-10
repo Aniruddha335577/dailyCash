@@ -15,8 +15,8 @@
                     </t>
 
                     <div class="cb_navbar_brand" t-on-click="goCashbookHome">
-                        <span class="cb_navbar_logo"><i class="fa fa-book"/></span>
-                        <span class="cb_navbar_title">CashBook</span>
+                        <img class="cb_navbar_logo" t-att-src="brandLogoUrl" t-att-alt="brandName"/>
+                        <span class="cb_navbar_title" t-esc="brandName"/>
                     </div>
 
                     <CashbookGlobalSearch t-if="!env.isSmall"/>

@@ -4,4 +4,12 @@
         <field name="key">cashbook.saas_mode</field>
         <field name="value">True</field>
     </record>
+    <record id="config_cashbook_brand_name" model="ir.config_parameter">
+        <field name="key">cashbook.brand_name</field>
+        <field name="value">HisabBro</field>
+    </record>
+    <record id="config_cashbook_brand_logo" model="ir.config_parameter">
+        <field name="key">cashbook.brand_logo</field>
+        <field name="value">/cashbook/static/img/brand_logo.svg</field>
+    </record>
 </odoo>
