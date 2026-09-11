@@ -152,6 +152,36 @@ class CashbookEntry(models.Model):
         self.ensure_one()
         return _("Cash In") if self.direction == "in" else _("Cash Out")
 
+    def get_report_payment_status_label(self):
+        self.ensure_one()
+        if not self.paid:
+            return _("Unpaid") if self.direction == "out" else _("Unreceived")
+        if not self.due:
+            return _("Paid") if self.direction == "out" else _("Received")
+        return _("Partially paid") if self.direction == "out" else _("Partially received")
+
+    @api.model
+    def get_list_report_currency_totals(self, entries):
+        """Aggregate totals grouped by currency for list reports."""
+        groups = {}
+        for entry in entries:
+            currency = entry.currency_id
+            key = currency.id if currency else 0
+            if key not in groups:
+                groups[key] = {
+                    "currency": currency,
+                    "total": 0.0,
+                    "paid": 0.0,
+                    "due": 0.0,
+                    "count": 0,
+                }
+            bucket = groups[key]
+            bucket["total"] += entry.total_amount or 0.0
+            bucket["paid"] += entry.paid or 0.0
+            bucket["due"] += entry.due or 0.0
+            bucket["count"] += 1
+        return list(groups.values())
+
     def format_report_amount(self, amount):
         """Format amount with currency code (e.g. 900.00 BDT) for PDF reports."""
         self.ensure_one()

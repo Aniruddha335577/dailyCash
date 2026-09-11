@@ -330,3 +330,22 @@ class TestCashbook(TransactionCase):
         self.assertEqual(self.business.get_report_initials(), "PM")
         self.assertEqual(self.business.get_report_tagline(), "Creative design house")
         self.assertEqual(self.business.get_report_address_oneline(), "Jatrabari, Dhaka")
+
+    def test_report_payment_status_label(self):
+        entry = self._create_entry()
+        self.assertEqual(entry.get_report_payment_status_label(), "Unreceived")
+        entry.write({
+            "payment_ids": [(0, 0, {
+                "payment_method_id": self.payment_method_cash.id,
+                "amount": 10000,
+            })],
+        })
+        self.assertEqual(entry.get_report_payment_status_label(), "Received")
+
+    def test_list_report_currency_totals(self):
+        entry_a = self._create_entry()
+        entry_b = self._create_entry()
+        totals = self.env["cashbook.entry"].get_list_report_currency_totals(entry_a | entry_b)
+        self.assertEqual(len(totals), 1)
+        self.assertEqual(totals[0]["count"], 2)
+        self.assertEqual(totals[0]["total"], entry_a.total_amount + entry_b.total_amount)

@@ -55,6 +55,7 @@ export class CashbookEntryList extends Component {
                 open: false,
                 entryId: null,
             },
+            selectedIds: [],
         });
 
         this.display = {
@@ -172,6 +173,9 @@ export class CashbookEntryList extends Component {
             fields,
             { order: "entry_datetime desc, id desc", limit: 500 }
         );
+        this.state.selectedIds = this.state.selectedIds.filter((id) =>
+            this.state.entries.some((entry) => entry.id === id)
+        );
         this.state.summary = this.state.entries.reduce(
             (acc, entry) => {
                 acc.total += entry.total_amount || 0;
@@ -252,6 +256,7 @@ export class CashbookEntryList extends Component {
             dateTo: "",
             search: "",
         };
+        this.state.selectedIds = [];
         await this.loadEntries();
     }
 
@@ -300,6 +305,136 @@ export class CashbookEntryList extends Component {
 
     openClassicList() {
         this.action.doAction("cashbook.action_cashbook_entry");
+    }
+
+    get selectedCount() {
+        return this.state.selectedIds.length;
+    }
+
+    get allVisibleSelected() {
+        return (
+            this.state.entries.length > 0 &&
+            this.state.entries.every((entry) => this.isSelected(entry.id))
+        );
+    }
+
+    isSelected(entryId) {
+        return this.state.selectedIds.includes(entryId);
+    }
+
+    toggleSelectEntry(entryId, ev) {
+        ev.stopPropagation();
+        if (this.isSelected(entryId)) {
+            this.state.selectedIds = this.state.selectedIds.filter((id) => id !== entryId);
+        } else {
+            this.state.selectedIds = [...this.state.selectedIds, entryId];
+        }
+    }
+
+    toggleSelectAllVisible(ev) {
+        ev.stopPropagation();
+        if (this.allVisibleSelected) {
+            const visibleIds = new Set(this.state.entries.map((entry) => entry.id));
+            this.state.selectedIds = this.state.selectedIds.filter((id) => !visibleIds.has(id));
+        } else {
+            const merged = new Set([
+                ...this.state.selectedIds,
+                ...this.state.entries.map((entry) => entry.id),
+            ]);
+            this.state.selectedIds = [...merged];
+        }
+    }
+
+    filterOptionLabel(list, id, allLabel) {
+        if (!id) {
+            return allLabel;
+        }
+        return list.find((item) => String(item.id) === String(id))?.name || allLabel;
+    }
+
+    getFilterSummaryLines() {
+        const f = this.state.filters;
+        const lines = [];
+
+        if (f.search.trim()) {
+            lines.push({ label: _t("Search"), value: f.search.trim() });
+        }
+        if (f.dateFrom || f.dateTo) {
+            lines.push({
+                label: _t("Period"),
+                value: `${f.dateFrom || "…"} → ${f.dateTo || "…"}`,
+            });
+        }
+        lines.push({
+            label: _t("Business"),
+            value: this.filterOptionLabel(this.state.businesses, f.businessId, _t("All Businesses")),
+        });
+        lines.push({
+            label: _t("Book"),
+            value: this.filterOptionLabel(this.state.books, f.bookId, _t("All Books")),
+        });
+        lines.push({
+            label: _t("Entry Type"),
+            value: this.filterOptionLabel(this.state.entryTypes, f.entryTypeId, _t("All Types")),
+        });
+        lines.push({
+            label: _t("Partner"),
+            value: this.filterOptionLabel(this.state.partners, f.partnerId, _t("All Partners")),
+        });
+        lines.push({
+            label: _t("Payment Method"),
+            value: this.filterOptionLabel(
+                this.state.paymentMethods,
+                f.paymentMethodId,
+                _t("All Methods")
+            ),
+        });
+
+        const directionLabels = {
+            all: _t("All"),
+            in: _t("Cash In"),
+            out: _t("Cash Out"),
+        };
+        lines.push({
+            label: _t("Direction"),
+            value: directionLabels[f.direction] || f.direction,
+        });
+
+        const partnerScopeLabels = {
+            all: _t("All"),
+            customer: _t("Customer"),
+            vendor: _t("Vendor"),
+        };
+        lines.push({
+            label: _t("Partner Type"),
+            value: partnerScopeLabels[f.partnerScope] || f.partnerScope,
+        });
+
+        const paymentStatusLabels = {
+            all: _t("All"),
+            paid: _t("Paid"),
+            partial: _t("Partial"),
+            unpaid: _t("Unpaid"),
+        };
+        lines.push({
+            label: _t("Payment Status"),
+            value: paymentStatusLabels[f.paymentStatus] || f.paymentStatus,
+        });
+
+        return lines;
+    }
+
+    async printSelectedReport() {
+        if (!this.state.selectedIds.length) {
+            return;
+        }
+        await this.action.doAction("cashbook.action_report_cashbook_entry_list", {
+            additionalContext: {
+                active_model: "cashbook.entry",
+                active_ids: [...this.state.selectedIds],
+                report_filter_summary: this.getFilterSummaryLines(),
+            },
+        });
     }
 }
 

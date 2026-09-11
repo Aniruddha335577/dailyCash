@@ -5,9 +5,19 @@
         <div class="o_action o_cashbook_entry_list">
             <Layout display="display">
                 <t t-set-slot="layout-buttons">
-                    <div class="o_cp_buttons d-flex gap-2">
+                    <div class="o_cp_buttons d-flex gap-2 align-items-center">
                         <button type="button" class="btn btn-primary" t-on-click="createEntry">
                             <i class="fa fa-plus me-1"/> New Entry
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                t-att-disabled="!selectedCount"
+                                t-on-click="printSelectedReport">
+                            <i class="fa fa-print me-1"/>
+                            Print Report
+                            <t t-if="selectedCount">
+                                (<t t-esc="selectedCount"/>)
+                            </t>
                         </button>
                         <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
                             Classic View
@@ -193,6 +203,12 @@
                                 <table class="table table-hover cb-entry-table mb-0">
                                     <thead>
                                         <tr>
+                                            <th class="cb-col-select">
+                                                <input type="checkbox"
+                                                       class="form-check-input"
+                                                       t-att-checked="allVisibleSelected"
+                                                       t-on-click="toggleSelectAllVisible"/>
+                                            </th>
                                             <th>Reference</th>
                                             <th>Date / Time</th>
                                             <th>Direction</th>
@@ -209,6 +225,12 @@
                                     <tbody>
                                         <t t-foreach="state.entries" t-as="entry" t-key="entry.id">
                                             <tr class="cb-entry-row" t-on-click="() => this.openEntry(entry)">
+                                                <td class="cb-col-select" t-on-click.stop="">
+                                                    <input type="checkbox"
+                                                           class="form-check-input"
+                                                           t-att-checked="isSelected(entry.id)"
+                                                           t-on-click="(ev) => this.toggleSelectEntry(entry.id, ev)"/>
+                                                </td>
                                                 <td class="fw-semibold cb-col-ref" t-esc="entry.name"/>
                                                 <td class="cb-col-date">
                                                     <span class="fw-semibold" t-esc="formatDate(entry.entry_datetime)"/>

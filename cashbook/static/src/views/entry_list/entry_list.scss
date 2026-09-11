@@ -354,6 +354,18 @@
         }
     }
 
+    .cb-col-select {
+        width: 42px;
+        text-align: center;
+        padding-left: 0.75rem !important;
+        padding-right: 0.35rem !important;
+
+        .form-check-input {
+            cursor: pointer;
+            margin: 0;
+        }
+    }
+
     .cb-col-ref {
         white-space: nowrap;
         font-variant-numeric: tabular-nums;
