@@ -64,8 +64,13 @@ export class CashbookEntryList extends Component {
         };
 
         onWillStart(async () => {
-            await this.loadFilterOptions();
-            await this.loadEntries();
+            try {
+                await this.loadFilterOptions();
+                await this.loadEntries();
+            } catch (error) {
+                console.error("Cashbook dashboard failed to load:", error);
+                this.state.loading = false;
+            }
         });
     }
 

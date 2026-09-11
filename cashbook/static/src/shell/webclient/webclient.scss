@@ -12,6 +12,21 @@ body.o_web_client.cb_cashbook_shell {
     overflow: hidden;
 }
 
+// When the cashbook shell is not active yet (menu still loading on refresh),
+// still let the action manager fill the viewport below the navbar.
+body.o_web_client:not(.cb_cashbook_shell) .cb_shell_layout {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    > main {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+    }
+}
+
 .cb_shell_main {
     flex: 1;
     min-width: 0;
