@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
     <record id="report_template_default" model="cashbook.report.template">
-        <field name="name">Professional Default</field>
+        <field name="name">Pixel Mart Default</field>
         <field name="sequence">1</field>
         <field name="is_default" eval="True"/>
-        <field name="layout">classic</field>
-        <field name="primary_color">#2563eb</field>
+        <field name="layout">modern</field>
+        <field name="primary_color">#1B2A41</field>
+        <field name="show_website" eval="True"/>
         <field name="show_saas_logo" eval="True"/>
         <field name="show_powered_by" eval="True"/>
         <field name="show_footer_contact" eval="True"/>

@@ -163,6 +163,13 @@ class CashbookEntry(models.Model):
             return f"{formatted} {currency_code}"
         return formatted
 
+    def format_report_amount_value(self, amount):
+        """Numeric amount only for invoice table columns."""
+        self.ensure_one()
+        currency = self.currency_id
+        decimal_places = currency.decimal_places if currency else 2
+        return formatLang(self.env, amount or 0.0, digits=decimal_places)
+
     def action_print_invoice(self):
         self.ensure_one()
         return self.env.ref("cashbook.action_report_cashbook_entry").report_action(self)

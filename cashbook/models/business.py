@@ -80,6 +80,25 @@ class CashbookBusiness(models.Model):
             parts.append(self.email)
         return parts
 
+    def get_report_initials(self):
+        """Monogram for report logo placeholder."""
+        self.ensure_one()
+        name = (self.name or "").strip()
+        if not name:
+            return "?"
+        return "".join(word[0].upper() for word in name.split()[:2])
+
+    def get_report_tagline(self):
+        """Subtitle under business name on invoices."""
+        self.ensure_one()
+        return self.legal_name or self.city or ""
+
+    def get_report_address_oneline(self):
+        """Single-line address for invoice contact strip."""
+        self.ensure_one()
+        parts = [p for p in [self.address_line_1, self.city, self.zip] if p]
+        return ", ".join(parts)
+
     @api.model
     def _ensure_cashbook_currencies(self):
         """Activate currencies commonly used in CashBook (BDT ships inactive in Odoo base)."""

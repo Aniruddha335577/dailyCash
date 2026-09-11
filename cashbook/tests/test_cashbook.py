@@ -311,3 +311,22 @@ class TestCashbook(TransactionCase):
         self.assertIn("BDT", formatted)
         self.assertNotIn("৳", formatted)
         self.assertRegex(formatted, r"900(\.00)? BDT")
+
+    def test_format_report_amount_value_omits_currency_code(self):
+        bdt = self.env.ref("base.BDT")
+        self.business.write({"currency_id": bdt.id})
+        entry = self._create_entry()
+        formatted = entry.format_report_amount_value(90)
+        self.assertNotIn("BDT", formatted)
+        self.assertRegex(formatted, r"90(\.00)?")
+
+    def test_business_report_branding_helpers(self):
+        self.business.write({
+            "name": "Pixel Mart",
+            "legal_name": "Creative design house",
+            "address_line_1": "Jatrabari",
+            "city": "Dhaka",
+        })
+        self.assertEqual(self.business.get_report_initials(), "PM")
+        self.assertEqual(self.business.get_report_tagline(), "Creative design house")
+        self.assertEqual(self.business.get_report_address_oneline(), "Jatrabari, Dhaka")

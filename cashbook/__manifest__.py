@@ -1,6 +1,6 @@
 {
     "name": "HisabBro",
-    "version": "19.0.1.0.8",
+    "version": "19.0.1.0.10",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
