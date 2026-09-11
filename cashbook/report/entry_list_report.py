@@ -4,6 +4,12 @@ from odoo.tools.misc import format_datetime
 from .entry_report import _get_saas_logo_data_uri
 
 
+def _chunk_lines(lines, size=4):
+    if not lines:
+        return []
+    return [lines[index : index + size] for index in range(0, len(lines), size)]
+
+
 class ReportCashbookEntryList(models.AbstractModel):
     _name = "report.cashbook.report_entry_list"
     _description = "CashBook Entry List Report"
@@ -26,6 +32,7 @@ class ReportCashbookEntryList(models.AbstractModel):
             reverse=True,
         )
         filter_lines = self.env.context.get("report_filter_summary") or []
+        filter_line_rows = _chunk_lines(filter_lines, 4)
         report_business = False
         currency_totals = []
         if docs:
@@ -40,6 +47,8 @@ class ReportCashbookEntryList(models.AbstractModel):
             "doc_model": "cashbook.entry",
             "docs": docs,
             "filter_lines": filter_lines,
+            "filter_line_rows": filter_line_rows,
+            "filters_applied": bool(filter_lines),
             "currency_totals": currency_totals,
             "report_business": report_business,
             "report_generated_at_label": format_datetime(

@@ -352,74 +352,89 @@ export class CashbookEntryList extends Component {
         return list.find((item) => String(item.id) === String(id))?.name || allLabel;
     }
 
+    formatFilterDate(isoDate) {
+        if (!isoDate) {
+            return "…";
+        }
+        const [year, month, day] = isoDate.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        return date.toLocaleDateString(undefined, {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        });
+    }
+
     getFilterSummaryLines() {
         const f = this.state.filters;
         const lines = [];
 
         if (f.search.trim()) {
-            lines.push({ label: _t("Search"), value: f.search.trim() });
+            lines.push({ label: _t("Search term"), value: f.search.trim() });
         }
         if (f.dateFrom || f.dateTo) {
             lines.push({
-                label: _t("Period"),
-                value: `${f.dateFrom || "…"} → ${f.dateTo || "…"}`,
+                label: _t("Date range"),
+                value: `${this.formatFilterDate(f.dateFrom)} – ${this.formatFilterDate(f.dateTo)}`,
             });
         }
-        lines.push({
-            label: _t("Business"),
-            value: this.filterOptionLabel(this.state.businesses, f.businessId, _t("All Businesses")),
-        });
-        lines.push({
-            label: _t("Book"),
-            value: this.filterOptionLabel(this.state.books, f.bookId, _t("All Books")),
-        });
-        lines.push({
-            label: _t("Entry Type"),
-            value: this.filterOptionLabel(this.state.entryTypes, f.entryTypeId, _t("All Types")),
-        });
-        lines.push({
-            label: _t("Partner"),
-            value: this.filterOptionLabel(this.state.partners, f.partnerId, _t("All Partners")),
-        });
-        lines.push({
-            label: _t("Payment Method"),
-            value: this.filterOptionLabel(
-                this.state.paymentMethods,
-                f.paymentMethodId,
-                _t("All Methods")
-            ),
-        });
-
-        const directionLabels = {
-            all: _t("All"),
-            in: _t("Cash In"),
-            out: _t("Cash Out"),
-        };
-        lines.push({
-            label: _t("Direction"),
-            value: directionLabels[f.direction] || f.direction,
-        });
-
-        const partnerScopeLabels = {
-            all: _t("All"),
-            customer: _t("Customer"),
-            vendor: _t("Vendor"),
-        };
-        lines.push({
-            label: _t("Partner Type"),
-            value: partnerScopeLabels[f.partnerScope] || f.partnerScope,
-        });
-
-        const paymentStatusLabels = {
-            all: _t("All"),
-            paid: _t("Paid"),
-            partial: _t("Partial"),
-            unpaid: _t("Unpaid"),
-        };
-        lines.push({
-            label: _t("Payment Status"),
-            value: paymentStatusLabels[f.paymentStatus] || f.paymentStatus,
-        });
+        if (f.businessId) {
+            lines.push({
+                label: _t("Business"),
+                value: this.filterOptionLabel(this.state.businesses, f.businessId, ""),
+            });
+        }
+        if (f.bookId) {
+            lines.push({
+                label: _t("Ledger book"),
+                value: this.filterOptionLabel(this.state.books, f.bookId, ""),
+            });
+        }
+        if (f.entryTypeId) {
+            lines.push({
+                label: _t("Entry type"),
+                value: this.filterOptionLabel(this.state.entryTypes, f.entryTypeId, ""),
+            });
+        }
+        if (f.partnerId) {
+            lines.push({
+                label: _t("Partner"),
+                value: this.filterOptionLabel(this.state.partners, f.partnerId, ""),
+            });
+        }
+        if (f.paymentMethodId) {
+            lines.push({
+                label: _t("Payment method"),
+                value: this.filterOptionLabel(
+                    this.state.paymentMethods,
+                    f.paymentMethodId,
+                    ""
+                ),
+            });
+        }
+        if (f.direction === "in" || f.direction === "out") {
+            lines.push({
+                label: _t("Cash flow"),
+                value: f.direction === "in" ? _t("Cash In") : _t("Cash Out"),
+            });
+        }
+        if (f.partnerScope === "customer" || f.partnerScope === "vendor") {
+            lines.push({
+                label: _t("Partner type"),
+                value: f.partnerScope === "customer" ? _t("Customers") : _t("Vendors"),
+            });
+        }
+        if (f.paymentStatus !== "all") {
+            const paymentStatusLabels = {
+                paid: _t("Fully settled"),
+                partial: _t("Partially settled"),
+                unpaid: _t("Unsettled"),
+            };
+            lines.push({
+                label: _t("Settlement"),
+                value: paymentStatusLabels[f.paymentStatus] || f.paymentStatus,
+            });
+        }
 
         return lines;
     }

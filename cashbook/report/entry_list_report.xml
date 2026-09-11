@@ -47,29 +47,63 @@
             }
             .el-meta-right { text-align: right; font-size: 9px; color: #6B7684; }
             .el-filters {
-                border: 1px solid #E4E6EA;
-                background: #F4F5F7;
-                padding: 8px 10px;
-                margin-bottom: 10px;
+                background: #1B2A41;
+                padding: 10px 12px 12px;
+                margin-bottom: 12px;
+                border-radius: 6px;
             }
-            .el-filters-title {
-                font-size: 9px;
-                font-weight: 700;
-                letter-spacing: 0.06em;
-                color: #1B2A41;
-                margin-bottom: 6px;
-            }
-            .el-filter-grid {
+            .el-filters-head {
                 width: 100%;
                 border-collapse: collapse;
+                margin-bottom: 8px;
             }
-            .el-filter-grid td {
-                padding: 2px 8px 2px 0;
+            .el-filters-head td { padding: 0; vertical-align: middle; }
+            .el-filters-title {
+                font-size: 8px;
+                font-weight: 700;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: #F5A623;
+            }
+            .el-filters-sub {
+                font-size: 8px;
+                color: #B9C2D1;
+                text-align: right;
+            }
+            .el-chips-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 6px;
+            }
+            .el-chip-cell {
+                width: 25%;
                 vertical-align: top;
-                width: 33%;
+                padding: 0;
             }
-            .el-filter-k { color: #6B7684; }
-            .el-filter-v { font-weight: 600; color: #26313F; }
+            .el-chip {
+                background: #fff;
+                border-left: 3px solid #F5A623;
+                border-radius: 4px;
+                padding: 7px 10px;
+                min-height: 32px;
+            }
+            .el-chip-wide {
+                border-left-color: #B9C2D1;
+            }
+            .el-chip-label {
+                font-size: 7px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: #6B7684;
+                font-weight: 700;
+            }
+            .el-chip-value {
+                font-size: 9.5px;
+                font-weight: 700;
+                color: #1B2A41;
+                margin-top: 3px;
+                line-height: 1.25;
+            }
             .el-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -149,19 +183,37 @@
                 </tr>
             </table>
 
-            <t t-if="filter_lines">
-                <div class="el-filters">
-                    <div class="el-filters-title">APPLIED FILTERS</div>
-                    <table class="el-filter-grid">
-                        <tr t-foreach="filter_lines" t-as="line">
-                            <td colspan="3">
-                                <span class="el-filter-k" t-esc="line.get('label')"/>:
-                                <span class="el-filter-v" t-esc="line.get('value')"/>
+            <div class="el-filters">
+                <table class="el-filters-head">
+                    <tr>
+                        <td>
+                            <div class="el-filters-title">Report scope</div>
+                        </td>
+                        <td class="el-filters-sub">
+                            <t t-if="filters_applied">Filtered view</t>
+                            <t t-else="">Unfiltered selection</t>
+                        </td>
+                    </tr>
+                </table>
+                <t t-if="filter_line_rows">
+                    <table class="el-chips-table">
+                        <tr t-foreach="filter_line_rows" t-as="row">
+                            <td t-foreach="row" t-as="chip" class="el-chip-cell">
+                                <div class="el-chip">
+                                    <div class="el-chip-label" t-esc="chip.get('label')"/>
+                                    <div class="el-chip-value" t-esc="chip.get('value')"/>
+                                </div>
                             </td>
                         </tr>
                     </table>
-                </div>
-            </t>
+                </t>
+                <t t-else="">
+                    <div class="el-chip el-chip-wide">
+                        <div class="el-chip-label">Selection</div>
+                        <div class="el-chip-value">All entries - no dashboard filters applied</div>
+                    </div>
+                </t>
+            </div>
 
             <table class="el-table">
                 <thead>
