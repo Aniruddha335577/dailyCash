@@ -1,0 +1,11 @@
+{
+    "mrp": "mrp",
+    "accounting": "account",
+    "api": "base",
+    "project": "project",
+    "inventory": "stock",
+    "purchase": "purchase",
+    "sales": "sale_management",
+    "hr": "hr",
+    "payroll": "payroll"
+}

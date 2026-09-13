@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_saas_subscription_form" model="ir.ui.view">
+        <field name="name">saas.subscription.form</field>
+        <field name="model">saas.subscription</field>
+        <field name="arch" type="xml">
+            <form string="SaaS Subscription">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="tenant_slug"/>
+                            <field name="package_code"/>
+                            <field name="package_version"/>
+                            <field name="configuration_revision"/>
+                            <field name="status"/>
+                            <field name="over_limit"/>
+                        </group>
+                        <group>
+                            <field name="admin_email"/>
+                            <field name="admin_user_id"/>
+                            <field name="last_update_at"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Features">
+                            <field name="feature_ids">
+                                <list editable="bottom">
+                                    <field name="code"/>
+                                    <field name="enabled"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Restrictions">
+                            <field name="restriction_ids">
+                                <list editable="bottom">
+                                    <field name="code"/>
+                                    <field name="value_type"/>
+                                    <field name="value_int"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_saas_subscription_list" model="ir.ui.view">
+        <field name="name">saas.subscription.list</field>
+        <field name="model">saas.subscription</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="tenant_slug"/>
+                <field name="package_code"/>
+                <field name="package_version"/>
+                <field name="configuration_revision"/>
+                <field name="status"/>
+                <field name="over_limit"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_saas_subscription" model="ir.actions.act_window">
+        <field name="name">SaaS Subscription</field>
+        <field name="res_model">saas.subscription</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_saas_subscription_root" name="SaaS Subscription" parent="base.menu_administration" sequence="95"/>
+    <menuitem id="menu_saas_subscription" name="Tenant Subscription" parent="menu_saas_subscription_root" action="action_saas_subscription"/>
+</odoo>

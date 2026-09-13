@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_saas_subscription_admin,saas.subscription admin,model_saas_subscription,base.group_system,1,1,1,1
+access_saas_subscription_feature_admin,saas.subscription.feature admin,model_saas_subscription_feature,base.group_system,1,1,1,1
+access_saas_subscription_restriction_admin,saas.subscription.restriction admin,model_saas_subscription_restriction,base.group_system,1,1,1,1

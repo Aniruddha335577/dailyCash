@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_provisioner_master_key" model="ir.config_parameter">
+        <field name="key">saas.provisioner.master_key</field>
+        <field name="value">softobro-provisioner-master-change-me</field>
+    </record>
+    <record id="param_saas_tenant_mode" model="ir.config_parameter">
+        <field name="key">saas.tenant_mode</field>
+        <field name="value">True</field>
+    </record>
+    <record id="param_it_support_login" model="ir.config_parameter">
+        <field name="key">saas.it_support_login</field>
+        <field name="value">support@softobro.internal</field>
+    </record>
+</odoo>

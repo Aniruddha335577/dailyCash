@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_saas" model="ir.module.category">
+        <field name="name">SaaS Platform</field>
+        <field name="sequence">95</field>
+    </record>
+
+    <record id="res_groups_privilege_saas_support" model="res.groups.privilege">
+        <field name="name">SaaS Support</field>
+        <field name="sequence">10</field>
+        <field name="category_id" ref="module_category_saas"/>
+    </record>
+
+    <record id="group_it_support" model="res.groups">
+        <field name="name">IT Support</field>
+        <field name="comment">
+            Internal SoftoBRo support staff. Can access the web database manager and other
+            infrastructure tools that are hidden from subscriber users.
+        </field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_saas_support"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+</odoo>
