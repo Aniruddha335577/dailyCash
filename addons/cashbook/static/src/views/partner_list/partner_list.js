@@ -9,6 +9,15 @@ import { standardActionServiceProps } from "@web/webclient/actions/action_servic
 import { formatMonetary } from "@web/views/fields/formatters";
 import { aggregateEntryStats } from "../../utils/entry_stats";
 import { partnerTypeLabel } from "../../utils/direction_labels";
+import {
+    allRecordsSelected,
+    confirmDeleteSelected,
+    isRecordSelected,
+    pruneSelection,
+    selectedCount,
+    toggleAllVisibleSelection,
+    toggleRecordSelection,
+} from "../../utils/record_selection";
 
 export class CashbookPartnerList extends Component {
     static template = "cashbook.PartnerList";
@@ -18,6 +27,7 @@ export class CashbookPartnerList extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dialog = useService("dialog");
 
         this.state = useState({
             partners: [],
@@ -26,6 +36,7 @@ export class CashbookPartnerList extends Component {
             search: "",
             partnerType: "all",
             viewMode: "grid",
+            selectedIds: [],
         });
 
         this.display = {
@@ -78,6 +89,10 @@ export class CashbookPartnerList extends Component {
         ]);
         this.state.partners = partners;
         this.state.stats = aggregateEntryStats(entries, "partner_id");
+        this.state.selectedIds = pruneSelection(
+            this.state.selectedIds,
+            this.filteredPartners
+        );
         this.state.loading = false;
     }
 
@@ -108,8 +123,53 @@ export class CashbookPartnerList extends Component {
         this.state.partnerType = partnerType;
     }
 
+    get selectedCount() {
+        return selectedCount(this.state.selectedIds);
+    }
+
+    get allVisibleSelected() {
+        return allRecordsSelected(this.state.selectedIds, this.filteredPartners);
+    }
+
+    isSelected(recordId) {
+        return isRecordSelected(this.state.selectedIds, recordId);
+    }
+
+    toggleSelectRecord(recordId, ev) {
+        this.state.selectedIds = toggleRecordSelection(
+            this.state.selectedIds,
+            recordId,
+            ev
+        );
+    }
+
+    toggleSelectAllVisible(ev) {
+        this.state.selectedIds = toggleAllVisibleSelection(
+            this.state.selectedIds,
+            this.filteredPartners,
+            ev
+        );
+    }
+
     setViewMode(mode) {
+        if (mode === "grid") {
+            this.state.selectedIds = [];
+        }
         this.state.viewMode = mode;
+    }
+
+    deleteSelected() {
+        confirmDeleteSelected({
+            dialog: this.dialog,
+            orm: this.orm,
+            model: "cashbook.partner",
+            selectedIds: this.state.selectedIds,
+            recordLabel: "partner",
+            onDeleted: async () => {
+                this.state.selectedIds = [];
+                await this.loadPartners();
+            },
+        });
     }
 
     openPartner(partner) {

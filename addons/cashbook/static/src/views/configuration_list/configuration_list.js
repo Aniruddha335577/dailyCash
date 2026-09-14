@@ -11,6 +11,33 @@ import {
     aggregateEntryStats,
     aggregatePaymentStats,
 } from "../../utils/entry_stats";
+import {
+    allRecordsSelected,
+    confirmDeleteSelected,
+    isRecordSelected,
+    pruneSelection,
+    selectedCount,
+    toggleAllVisibleSelection,
+    toggleRecordSelection,
+} from "../../utils/record_selection";
+
+const SECTION_CONFIG = {
+    entry_types: {
+        selectionKey: "entryTypes",
+        model: "cashbook.entry.type",
+        label: "entry type",
+    },
+    payment_methods: {
+        selectionKey: "paymentMethods",
+        model: "cashbook.payment.method",
+        label: "payment method",
+    },
+    report_templates: {
+        selectionKey: "reportTemplates",
+        model: "cashbook.report.template",
+        label: "report template",
+    },
+};
 
 export class CashbookConfigurationList extends Component {
     static template = "cashbook.ConfigurationList";
@@ -20,6 +47,7 @@ export class CashbookConfigurationList extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dialog = useService("dialog");
 
         const ctx = this.props.action.context || {};
         this.section = ctx.default_section || "all";
@@ -32,6 +60,12 @@ export class CashbookConfigurationList extends Component {
             paymentStats: {},
             loading: true,
             search: "",
+            viewMode: "grid",
+            selection: {
+                entryTypes: [],
+                paymentMethods: [],
+                reportTemplates: [],
+            },
         });
 
         this.display = {
@@ -132,7 +166,87 @@ export class CashbookConfigurationList extends Component {
         this.state.reportTemplates = reportTemplates;
         this.state.entryTypeStats = aggregateEntryStats(entries, "entry_type_id");
         this.state.paymentStats = aggregatePaymentStats(payments);
+        this.state.selection.entryTypes = pruneSelection(
+            this.state.selection.entryTypes,
+            this.filteredEntryTypes
+        );
+        this.state.selection.paymentMethods = pruneSelection(
+            this.state.selection.paymentMethods,
+            this.filteredPaymentMethods
+        );
+        this.state.selection.reportTemplates = pruneSelection(
+            this.state.selection.reportTemplates,
+            this.filteredReportTemplates
+        );
         this.state.loading = false;
+    }
+
+    _sectionRecords(section) {
+        if (section === "entry_types") {
+            return this.filteredEntryTypes;
+        }
+        if (section === "payment_methods") {
+            return this.filteredPaymentMethods;
+        }
+        return this.filteredReportTemplates;
+    }
+
+    _sectionSelection(section) {
+        return this.state.selection[SECTION_CONFIG[section].selectionKey];
+    }
+
+    sectionSelectedCount(section) {
+        return selectedCount(this._sectionSelection(section));
+    }
+
+    allSectionSelected(section) {
+        return allRecordsSelected(this._sectionSelection(section), this._sectionRecords(section));
+    }
+
+    isSectionSelected(section, recordId) {
+        return isRecordSelected(this._sectionSelection(section), recordId);
+    }
+
+    toggleSectionRecord(section, recordId, ev) {
+        const key = SECTION_CONFIG[section].selectionKey;
+        this.state.selection[key] = toggleRecordSelection(
+            this.state.selection[key],
+            recordId,
+            ev
+        );
+    }
+
+    toggleSectionSelectAll(section, ev) {
+        const key = SECTION_CONFIG[section].selectionKey;
+        this.state.selection[key] = toggleAllVisibleSelection(
+            this.state.selection[key],
+            this._sectionRecords(section),
+            ev
+        );
+    }
+
+    setViewMode(mode) {
+        if (mode === "grid") {
+            this.state.selection.entryTypes = [];
+            this.state.selection.paymentMethods = [];
+            this.state.selection.reportTemplates = [];
+        }
+        this.state.viewMode = mode;
+    }
+
+    deleteSectionSelected(section) {
+        const config = SECTION_CONFIG[section];
+        confirmDeleteSelected({
+            dialog: this.dialog,
+            orm: this.orm,
+            model: config.model,
+            selectedIds: this._sectionSelection(section),
+            recordLabel: config.label,
+            onDeleted: async () => {
+                this.state.selection[config.selectionKey] = [];
+                await this.loadConfiguration();
+            },
+        });
     }
 
     entryTypeStats(entryType) {

@@ -1,0 +1,61 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.so
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+*.manifest
+*.spec
+
+# --- Virtual environments ---
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+ENV/
+
+# --- Test / coverage ---
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+nosetests.xml
+coverage.xml
+
+# --- Editors & OS ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Logs & local runtime ---
+*.log
+*.pid
+*.sqlite3
+
+# --- Odoo / local dev (keep secrets and machine-specific config out of git) ---
+*.conf.local
+odoo.conf.local
+local.conf
+filestore/
+sessions/
+.delivery/
+
+# --- Packaging / tooling caches ---
+.pre-commit-cache/
+node_modules/

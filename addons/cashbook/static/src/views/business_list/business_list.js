@@ -10,6 +10,15 @@ import {
     aggregateBookCounts,
     aggregateEntryStats,
 } from "../../utils/entry_stats";
+import {
+    allRecordsSelected,
+    confirmDeleteSelected,
+    isRecordSelected,
+    pruneSelection,
+    selectedCount,
+    toggleAllVisibleSelection,
+    toggleRecordSelection,
+} from "../../utils/record_selection";
 
 export class CashbookBusinessList extends Component {
     static template = "cashbook.BusinessList";
@@ -19,6 +28,7 @@ export class CashbookBusinessList extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dialog = useService("dialog");
 
         this.state = useState({
             businesses: [],
@@ -27,6 +37,7 @@ export class CashbookBusinessList extends Component {
             loading: true,
             search: "",
             viewMode: "grid",
+            selectedIds: [],
         });
 
         this.display = {
@@ -78,6 +89,10 @@ export class CashbookBusinessList extends Component {
         this.state.businesses = businesses;
         this.state.entryStats = aggregateEntryStats(entries, "business_id");
         this.state.bookCounts = aggregateBookCounts(books);
+        this.state.selectedIds = pruneSelection(
+            this.state.selectedIds,
+            this.filteredBusinesses
+        );
         this.state.loading = false;
     }
 
@@ -99,8 +114,53 @@ export class CashbookBusinessList extends Component {
         return formatMonetary(amount || 0, { currencyId });
     }
 
+    get selectedCount() {
+        return selectedCount(this.state.selectedIds);
+    }
+
+    get allVisibleSelected() {
+        return allRecordsSelected(this.state.selectedIds, this.filteredBusinesses);
+    }
+
+    isSelected(recordId) {
+        return isRecordSelected(this.state.selectedIds, recordId);
+    }
+
+    toggleSelectRecord(recordId, ev) {
+        this.state.selectedIds = toggleRecordSelection(
+            this.state.selectedIds,
+            recordId,
+            ev
+        );
+    }
+
+    toggleSelectAllVisible(ev) {
+        this.state.selectedIds = toggleAllVisibleSelection(
+            this.state.selectedIds,
+            this.filteredBusinesses,
+            ev
+        );
+    }
+
     setViewMode(mode) {
+        if (mode === "grid") {
+            this.state.selectedIds = [];
+        }
         this.state.viewMode = mode;
+    }
+
+    deleteSelected() {
+        confirmDeleteSelected({
+            dialog: this.dialog,
+            orm: this.orm,
+            model: "cashbook.business",
+            selectedIds: this.state.selectedIds,
+            recordLabel: "business",
+            onDeleted: async () => {
+                this.state.selectedIds = [];
+                await this.loadBusinesses();
+            },
+        });
     }
 
     openBusiness(business) {

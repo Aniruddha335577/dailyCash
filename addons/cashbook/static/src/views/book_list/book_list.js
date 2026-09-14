@@ -7,6 +7,15 @@ import { Layout } from "@web/search/layout";
 import { standardActionServiceProps } from "@web/webclient/actions/action_service";
 import { formatMonetary } from "@web/views/fields/formatters";
 import { aggregateEntryStats } from "../../utils/entry_stats";
+import {
+    allRecordsSelected,
+    confirmDeleteSelected,
+    isRecordSelected,
+    pruneSelection,
+    selectedCount,
+    toggleAllVisibleSelection,
+    toggleRecordSelection,
+} from "../../utils/record_selection";
 
 export class CashbookBookList extends Component {
     static template = "cashbook.BookList";
@@ -16,6 +25,7 @@ export class CashbookBookList extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dialog = useService("dialog");
 
         const ctx = this.props.action.context || {};
 
@@ -27,6 +37,7 @@ export class CashbookBookList extends Component {
             search: "",
             businessId: ctx.default_business_id ? String(ctx.default_business_id) : "",
             viewMode: "grid",
+            selectedIds: [],
         });
 
         this.display = {
@@ -87,6 +98,7 @@ export class CashbookBookList extends Component {
         this.state.books = books;
         this.state.businesses = businesses;
         this.state.stats = aggregateEntryStats(entries, "book_id");
+        this.state.selectedIds = pruneSelection(this.state.selectedIds, this.filteredBooks);
         this.state.loading = false;
     }
 
@@ -98,8 +110,53 @@ export class CashbookBookList extends Component {
         return formatMonetary(amount || 0, { currencyId });
     }
 
+    get selectedCount() {
+        return selectedCount(this.state.selectedIds);
+    }
+
+    get allVisibleSelected() {
+        return allRecordsSelected(this.state.selectedIds, this.filteredBooks);
+    }
+
+    isSelected(recordId) {
+        return isRecordSelected(this.state.selectedIds, recordId);
+    }
+
+    toggleSelectRecord(recordId, ev) {
+        this.state.selectedIds = toggleRecordSelection(
+            this.state.selectedIds,
+            recordId,
+            ev
+        );
+    }
+
+    toggleSelectAllVisible(ev) {
+        this.state.selectedIds = toggleAllVisibleSelection(
+            this.state.selectedIds,
+            this.filteredBooks,
+            ev
+        );
+    }
+
     setViewMode(mode) {
+        if (mode === "grid") {
+            this.state.selectedIds = [];
+        }
         this.state.viewMode = mode;
+    }
+
+    deleteSelected() {
+        confirmDeleteSelected({
+            dialog: this.dialog,
+            orm: this.orm,
+            model: "cashbook.book",
+            selectedIds: this.state.selectedIds,
+            recordLabel: "book",
+            onDeleted: async () => {
+                this.state.selectedIds = [];
+                await this.loadBooks();
+            },
+        });
     }
 
     openBook(book) {

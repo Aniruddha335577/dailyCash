@@ -58,6 +58,37 @@
     .cb_navbar_actions {
         gap: 0.35rem;
         background: transparent !important;
+        align-items: center;
+
+        .o_user_menu {
+            display: flex;
+            align-items: center;
+
+            button {
+                display: inline-flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 0.35rem;
+                border: 1px solid var(--cb-nav-border);
+                border-radius: 999px;
+                padding: 0.15rem 0.45rem 0.15rem 0.15rem;
+                background: #f8fafc;
+                line-height: 1;
+                max-height: 40px;
+            }
+
+            .o_user_avatar {
+                height: 32px;
+                width: 32px;
+                object-fit: cover;
+                flex-shrink: 0;
+            }
+
+            // Debug mode exposes db name under the username; keep the shell header compact.
+            .oe_topbar_name {
+                display: none !important;
+            }
+        }
     }
 
     .cb-global-search {
@@ -117,19 +148,6 @@
         padding: 0.35rem 0.85rem;
     }
 
-    // Restyle default user menu inside CashBook shell
-    .o_user_menu .dropdown-toggle {
-        border: 1px solid var(--cb-nav-border);
-        border-radius: 999px;
-        padding: 0.15rem 0.35rem 0.15rem 0.15rem;
-        background: #f8fafc;
-
-        .o_user_avatar {
-            height: calc(var(--o-navbar-height) - 20px);
-            width: calc(var(--o-navbar-height) - 20px);
-            object-fit: cover;
-        }
-    }
 }
 
 .cb-mobile-menu-backdrop {

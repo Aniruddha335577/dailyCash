@@ -9,6 +9,14 @@
                         <button type="button" class="btn btn-primary" t-on-click="createBook">
                             <i class="fa fa-plus me-1"/> New Book
                         </button>
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                t-if="state.viewMode === 'list'"
+                                t-att-disabled="!selectedCount"
+                                t-on-click="deleteSelected">
+                            <i class="fa fa-trash me-1"/> Delete
+                            <t t-if="selectedCount">(<t t-esc="selectedCount"/>)</t>
+                        </button>
                         <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
                             Classic View
                         </button>
@@ -75,6 +83,12 @@
                                 <table class="table table-hover cb-entity-table mb-0">
                                     <thead>
                                         <tr>
+                                            <th class="cb-col-select">
+                                                <input type="checkbox"
+                                                       class="form-check-input"
+                                                       t-att-checked="allVisibleSelected"
+                                                       t-on-click="toggleSelectAllVisible"/>
+                                            </th>
                                             <th>Book</th>
                                             <th>Business</th>
                                             <th>Currency</th>
@@ -86,7 +100,14 @@
                                     <tbody>
                                         <t t-foreach="filteredBooks" t-as="book" t-key="book.id">
                                             <t t-set="stats" t-value="bookStats(book)"/>
-                                            <tr class="cb-entity-row-clickable" t-on-click="() => this.openBook(book)">
+                                            <tr t-att-class="'cb-entity-row-clickable' + (isSelected(book.id) ? ' cb-row-selected' : '')"
+                                                t-on-click="() => this.openBook(book)">
+                                                <td class="cb-col-select" t-on-click.stop="">
+                                                    <input type="checkbox"
+                                                           class="form-check-input"
+                                                           t-att-checked="isSelected(book.id)"
+                                                           t-on-click="(ev) => this.toggleSelectRecord(book.id, ev)"/>
+                                                </td>
                                                 <td class="fw-semibold" t-esc="book.name"/>
                                                 <td t-esc="book.business_id ? book.business_id[1] : '—'"/>
                                                 <td t-esc="book.currency_id ? book.currency_id[1] : '—'"/>

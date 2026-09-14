@@ -10,6 +10,16 @@
                             <button type="button" class="btn btn-primary" t-on-click="createEntryType">
                                 <i class="fa fa-plus me-1"/> New Entry Type
                             </button>
+                            <button type="button"
+                                    class="btn btn-outline-danger"
+                                    t-if="state.viewMode === 'list'"
+                                    t-att-disabled="!sectionSelectedCount('entry_types')"
+                                    t-on-click="() => this.deleteSectionSelected('entry_types')">
+                                <i class="fa fa-trash me-1"/> Delete
+                                <t t-if="sectionSelectedCount('entry_types')">
+                                    (<t t-esc="sectionSelectedCount('entry_types')"/>)
+                                </t>
+                            </button>
                             <button type="button" class="btn btn-secondary" t-on-click="openClassicEntryTypes">
                                 Classic View
                             </button>
@@ -18,6 +28,16 @@
                             <button type="button" class="btn btn-primary" t-on-click="createPaymentMethod">
                                 <i class="fa fa-plus me-1"/> New Payment Method
                             </button>
+                            <button type="button"
+                                    class="btn btn-outline-danger"
+                                    t-if="state.viewMode === 'list'"
+                                    t-att-disabled="!sectionSelectedCount('payment_methods')"
+                                    t-on-click="() => this.deleteSectionSelected('payment_methods')">
+                                <i class="fa fa-trash me-1"/> Delete
+                                <t t-if="sectionSelectedCount('payment_methods')">
+                                    (<t t-esc="sectionSelectedCount('payment_methods')"/>)
+                                </t>
+                            </button>
                             <button type="button" class="btn btn-secondary" t-on-click="openClassicPaymentMethods">
                                 Classic View
                             </button>
@@ -25,6 +45,16 @@
                         <t t-elif="showReportTemplates and !showEntryTypes and !showPaymentMethods">
                             <button type="button" class="btn btn-primary" t-on-click="createReportTemplate">
                                 <i class="fa fa-plus me-1"/> New Report Template
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-danger"
+                                    t-if="state.viewMode === 'list'"
+                                    t-att-disabled="!sectionSelectedCount('report_templates')"
+                                    t-on-click="() => this.deleteSectionSelected('report_templates')">
+                                <i class="fa fa-trash me-1"/> Delete
+                                <t t-if="sectionSelectedCount('report_templates')">
+                                    (<t t-esc="sectionSelectedCount('report_templates')"/>)
+                                </t>
                             </button>
                             <button type="button" class="btn btn-secondary" t-on-click="openClassicReportTemplates">
                                 Classic View
@@ -41,6 +71,23 @@
                                 <span class="input-group-text"><i class="fa fa-search"/></span>
                                 <input type="text" class="form-control" placeholder="Name or description..."
                                        t-model="state.search"/>
+                            </div>
+                        </div>
+                        <div class="cb-view-toggle-wrap">
+                            <label class="cb-card-filter-label">View</label>
+                            <div class="cb-view-toggle">
+                                <button type="button"
+                                        t-att-class="'cb-view-btn' + (state.viewMode === 'grid' ? ' active' : '')"
+                                        title="Card view"
+                                        t-on-click="() => this.setViewMode('grid')">
+                                    <i class="fa fa-th-large"/>
+                                </button>
+                                <button type="button"
+                                        t-att-class="'cb-view-btn' + (state.viewMode === 'list' ? ' active' : '')"
+                                        title="List view"
+                                        t-on-click="() => this.setViewMode('list')">
+                                    <i class="fa fa-list"/>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -64,6 +111,13 @@
                                                 t-on-click="createEntryType">
                                             <i class="fa fa-plus me-1"/> New
                                         </button>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                t-if="state.viewMode === 'list'"
+                                                t-att-disabled="!sectionSelectedCount('entry_types')"
+                                                t-on-click="() => this.deleteSectionSelected('entry_types')">
+                                            <i class="fa fa-trash me-1"/> Delete
+                                        </button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary"
                                                 t-on-click="openClassicEntryTypes">
                                             Classic
@@ -71,7 +125,47 @@
                                     </div>
                                 </div>
 
-                                <t t-if="!filteredEntryTypes.length">
+                                <t t-if="state.viewMode === 'list' and filteredEntryTypes.length">
+                                    <div class="cb-entity-table-card card">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover cb-entity-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="cb-col-select">
+                                                            <input type="checkbox"
+                                                                   class="form-check-input"
+                                                                   t-att-checked="allSectionSelected('entry_types')"
+                                                                   t-on-click="(ev) => this.toggleSectionSelectAll('entry_types', ev)"/>
+                                                        </th>
+                                                        <th>Name</th>
+                                                        <th>Description</th>
+                                                        <th class="text-end">Entries</th>
+                                                        <th class="text-end">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="filteredEntryTypes" t-as="entryType" t-key="entryType.id">
+                                                        <t t-set="stats" t-value="entryTypeStats(entryType)"/>
+                                                        <tr t-att-class="'cb-entity-row-clickable' + (isSectionSelected('entry_types', entryType.id) ? ' cb-row-selected' : '')"
+                                                            t-on-click="() => this.openEntryType(entryType)">
+                                                            <td class="cb-col-select" t-on-click.stop="">
+                                                                <input type="checkbox"
+                                                                       class="form-check-input"
+                                                                       t-att-checked="isSectionSelected('entry_types', entryType.id)"
+                                                                       t-on-click="(ev) => this.toggleSectionRecord('entry_types', entryType.id, ev)"/>
+                                                            </td>
+                                                            <td class="fw-semibold" t-esc="entryType.name"/>
+                                                            <td t-esc="entryType.description || '—'"/>
+                                                            <td class="text-end" t-esc="stats.count"/>
+                                                            <td class="text-end" t-esc="formatMoney(stats.total, stats.currencyId)"/>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-elif="!filteredEntryTypes.length">
                                     <div class="cb-empty-state cb-empty-state-compact">
                                         <p class="text-muted mb-2">No entry types found.</p>
                                         <button type="button" class="btn btn-sm btn-primary" t-on-click="createEntryType">
@@ -126,6 +220,13 @@
                                                 t-on-click="createPaymentMethod">
                                             <i class="fa fa-plus me-1"/> New
                                         </button>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                t-if="state.viewMode === 'list'"
+                                                t-att-disabled="!sectionSelectedCount('payment_methods')"
+                                                t-on-click="() => this.deleteSectionSelected('payment_methods')">
+                                            <i class="fa fa-trash me-1"/> Delete
+                                        </button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary"
                                                 t-on-click="openClassicPaymentMethods">
                                             Classic
@@ -133,7 +234,47 @@
                                     </div>
                                 </div>
 
-                                <t t-if="!filteredPaymentMethods.length">
+                                <t t-if="state.viewMode === 'list' and filteredPaymentMethods.length">
+                                    <div class="cb-entity-table-card card">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover cb-entity-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="cb-col-select">
+                                                            <input type="checkbox"
+                                                                   class="form-check-input"
+                                                                   t-att-checked="allSectionSelected('payment_methods')"
+                                                                   t-on-click="(ev) => this.toggleSectionSelectAll('payment_methods', ev)"/>
+                                                        </th>
+                                                        <th>Name</th>
+                                                        <th>Description</th>
+                                                        <th class="text-end">Payments</th>
+                                                        <th class="text-end">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="filteredPaymentMethods" t-as="paymentMethod" t-key="paymentMethod.id">
+                                                        <t t-set="stats" t-value="paymentMethodStats(paymentMethod)"/>
+                                                        <tr t-att-class="'cb-entity-row-clickable' + (isSectionSelected('payment_methods', paymentMethod.id) ? ' cb-row-selected' : '')"
+                                                            t-on-click="() => this.openPaymentMethod(paymentMethod)">
+                                                            <td class="cb-col-select" t-on-click.stop="">
+                                                                <input type="checkbox"
+                                                                       class="form-check-input"
+                                                                       t-att-checked="isSectionSelected('payment_methods', paymentMethod.id)"
+                                                                       t-on-click="(ev) => this.toggleSectionRecord('payment_methods', paymentMethod.id, ev)"/>
+                                                            </td>
+                                                            <td class="fw-semibold" t-esc="paymentMethod.name"/>
+                                                            <td t-esc="paymentMethod.description || '—'"/>
+                                                            <td class="text-end" t-esc="stats.count"/>
+                                                            <td class="text-end cb-stat-paid" t-esc="formatMoney(stats.total)"/>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-elif="!filteredPaymentMethods.length">
                                     <div class="cb-empty-state cb-empty-state-compact">
                                         <p class="text-muted mb-2">No payment methods found.</p>
                                         <button type="button" class="btn btn-sm btn-primary"
@@ -189,6 +330,13 @@
                                                 t-on-click="createReportTemplate">
                                             <i class="fa fa-plus me-1"/> New
                                         </button>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                t-if="state.viewMode === 'list'"
+                                                t-att-disabled="!sectionSelectedCount('report_templates')"
+                                                t-on-click="() => this.deleteSectionSelected('report_templates')">
+                                            <i class="fa fa-trash me-1"/> Delete
+                                        </button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary"
                                                 t-on-click="openClassicReportTemplates">
                                             Classic
@@ -196,7 +344,51 @@
                                     </div>
                                 </div>
 
-                                <t t-if="!filteredReportTemplates.length">
+                                <t t-if="state.viewMode === 'list' and filteredReportTemplates.length">
+                                    <div class="cb-entity-table-card card">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover cb-entity-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="cb-col-select">
+                                                            <input type="checkbox"
+                                                                   class="form-check-input"
+                                                                   t-att-checked="allSectionSelected('report_templates')"
+                                                                   t-on-click="(ev) => this.toggleSectionSelectAll('report_templates', ev)"/>
+                                                        </th>
+                                                        <th>Name</th>
+                                                        <th>Layout</th>
+                                                        <th>Page</th>
+                                                        <th>Default</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="filteredReportTemplates" t-as="template" t-key="template.id">
+                                                        <tr t-att-class="'cb-entity-row-clickable' + (isSectionSelected('report_templates', template.id) ? ' cb-row-selected' : '')"
+                                                            t-on-click="() => this.openReportTemplate(template)">
+                                                            <td class="cb-col-select" t-on-click.stop="">
+                                                                <input type="checkbox"
+                                                                       class="form-check-input"
+                                                                       t-att-checked="isSectionSelected('report_templates', template.id)"
+                                                                       t-on-click="(ev) => this.toggleSectionRecord('report_templates', template.id, ev)"/>
+                                                            </td>
+                                                            <td class="fw-semibold" t-esc="template.name"/>
+                                                            <td t-esc="layoutLabel(template.layout)"/>
+                                                            <td class="text-uppercase" t-esc="template.page_size"/>
+                                                            <td>
+                                                                <t t-if="template.is_default">
+                                                                    <span class="badge text-bg-primary">Default</span>
+                                                                </t>
+                                                                <t t-else="">—</t>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-elif="!filteredReportTemplates.length">
                                     <div class="cb-empty-state cb-empty-state-compact">
                                         <p class="text-muted mb-2">No report templates found.</p>
                                         <button type="button" class="btn btn-sm btn-primary"
