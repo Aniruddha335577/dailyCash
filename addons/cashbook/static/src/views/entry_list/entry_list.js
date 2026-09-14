@@ -15,6 +15,7 @@ import {
     entrySettlementLabels,
     settlementLabels,
 } from "../../utils/direction_labels";
+import { confirmDeleteSelected } from "../../utils/record_selection";
 
 export class CashbookEntryList extends Component {
     static template = "cashbook.EntryList";
@@ -24,6 +25,7 @@ export class CashbookEntryList extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dialog = useService("dialog");
 
         const ctx = this.props.action.context || {};
 
@@ -453,6 +455,20 @@ export class CashbookEntryList extends Component {
                 active_model: "cashbook.entry",
                 active_ids: [...this.state.selectedIds],
                 report_filter_summary: this.getFilterSummaryLines(),
+            },
+        });
+    }
+
+    deleteSelected() {
+        confirmDeleteSelected({
+            dialog: this.dialog,
+            orm: this.orm,
+            model: "cashbook.entry",
+            selectedIds: this.state.selectedIds,
+            recordLabel: "entry",
+            onDeleted: async () => {
+                this.state.selectedIds = [];
+                await this.loadEntries();
             },
         });
     }

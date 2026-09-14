@@ -346,6 +346,10 @@
         }
     }
 
+    .cb-row-selected {
+        background: rgba($o-brand-primary, 0.06);
+    }
+
     .cb-entry-row {
         cursor: pointer;
 

@@ -19,6 +19,16 @@
                                 (<t t-esc="selectedCount"/>)
                             </t>
                         </button>
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                t-att-disabled="!selectedCount"
+                                t-on-click="deleteSelected">
+                            <i class="fa fa-trash me-1"/>
+                            Delete
+                            <t t-if="selectedCount">
+                                (<t t-esc="selectedCount"/>)
+                            </t>
+                        </button>
                         <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
                             Classic View
                         </button>
@@ -224,7 +234,8 @@
                                     </thead>
                                     <tbody>
                                         <t t-foreach="state.entries" t-as="entry" t-key="entry.id">
-                                            <tr class="cb-entry-row" t-on-click="() => this.openEntry(entry)">
+                                            <tr t-att-class="'cb-entry-row' + (isSelected(entry.id) ? ' cb-row-selected' : '')"
+                                                t-on-click="() => this.openEntry(entry)">
                                                 <td class="cb-col-select" t-on-click.stop="">
                                                     <input type="checkbox"
                                                            class="form-check-input"
