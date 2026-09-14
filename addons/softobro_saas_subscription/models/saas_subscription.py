@@ -6,7 +6,7 @@ import random
 import secrets
 from pathlib import Path
 
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import AccessDenied, UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
@@ -145,13 +145,14 @@ class SaasSubscription(models.Model):
             admin.write({"name": name, "email": email, "active": True})
             return admin
 
-        group_user = self.env.ref("base.group_user")
-        group_system = self.env.ref("base.group_system")
+        group_subscriber_admin = self.env.ref(
+            "softobro_saas_subscription.group_subscriber_admin"
+        )
         return Users.with_context(no_reset_password=True).create({
             "name": name,
             "login": email,
             "email": email,
-            "groups_id": [(6, 0, [group_user.id, group_system.id])],
+            "group_ids": [Command.set([group_subscriber_admin.id])],
             "active": True,
         })
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- base_install_request grants module read to all internal users; undo that for tenants. -->
+    <record id="rule_subscriber_no_module_management" model="ir.rule">
+        <field name="name">Tenant Admin: no Apps / module management</field>
+        <field name="model_id" ref="base.model_ir_module_module"/>
+        <field name="domain_force">[(0, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_subscriber_admin'))]"/>
+    </record>
+</odoo>

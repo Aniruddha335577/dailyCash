@@ -50,6 +50,44 @@ def is_it_support_user():
         return False
 
 
+def saas_platform_locked():
+    """True when the current session user must not access Apps / Settings."""
+    uid = request.session.uid
+    dbname = request.db or request.session.db
+    if not uid or not dbname:
+        return False
+    try:
+        env = request.env
+        cr = getattr(env, "cr", None)
+        if cr is not None and not cr.closed:
+            return env["saas.platform.mixin"].saas_platform_locked(
+                env["res.users"].browse(uid)
+            )
+    except Exception:
+        pass
+    try:
+        with Registry(dbname).cursor() as cr:
+            env = api.Environment(cr, uid, {})
+            return env["saas.platform.mixin"].saas_platform_locked(env.user)
+    except Exception:
+        return False
+
+
+def saas_platform_path_blocked(subpath):
+    """Return True for Odoo platform URLs that subscribers must not open."""
+    try:
+        return request.env["saas.platform.mixin"].saas_path_blocked(subpath)
+    except Exception:
+        return False
+
+
+def saas_subscriber_home_url():
+    try:
+        return request.env["saas.platform.mixin"].saas_subscriber_home_url()
+    except Exception:
+        return "/odoo"
+
+
 def saas_database_ui_blocked():
     """Return True when the web database manager must not be exposed."""
     if str(config.get("saas_allow_database_manager", "")).lower() in ("1", "true", "yes"):

@@ -11,6 +11,23 @@
         <field name="category_id" ref="module_category_saas"/>
     </record>
 
+    <record id="res_groups_privilege_subscriber_admin" model="res.groups.privilege">
+        <field name="name">Tenant Admin</field>
+        <field name="sequence">20</field>
+        <field name="category_id" ref="module_category_saas"/>
+    </record>
+
+    <record id="group_subscriber_admin" model="res.groups">
+        <field name="name">Tenant Admin</field>
+        <field name="comment">
+            Customer administrator for a SaaS tenant. Can use the product application but
+            cannot access Odoo Apps, Settings, or other platform administration tools.
+        </field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_subscriber_admin"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
     <record id="group_it_support" model="res.groups">
         <field name="name">IT Support</field>
         <field name="comment">
