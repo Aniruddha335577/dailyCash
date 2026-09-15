@@ -9,6 +9,7 @@ class IrHttp(models.AbstractModel):
         if info.get("uid"):
             mixin = self.env["saas.platform.mixin"]
             info["saas_platform_locked"] = mixin.saas_platform_locked()
+            info["saas_it_support"] = mixin.is_it_support_user()
             info["saas_blocked_paths"] = list(mixin.saas_blocked_paths())
             info["saas_home_url"] = mixin.saas_subscriber_home_url()
         return info

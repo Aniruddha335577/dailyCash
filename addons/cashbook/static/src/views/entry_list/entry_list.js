@@ -16,6 +16,7 @@ import {
     settlementLabels,
 } from "../../utils/direction_labels";
 import { confirmDeleteSelected } from "../../utils/record_selection";
+import { showClassicView } from "../../utils/saas_access";
 
 export class CashbookEntryList extends Component {
     static template = "cashbook.EntryList";
@@ -312,6 +313,10 @@ export class CashbookEntryList extends Component {
 
     openClassicList() {
         this.action.doAction("cashbook.action_cashbook_entry");
+    }
+
+    get showClassicView() {
+        return showClassicView();
     }
 
     get selectedCount() {

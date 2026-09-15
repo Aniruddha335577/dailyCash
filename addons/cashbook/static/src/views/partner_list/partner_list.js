@@ -18,6 +18,7 @@ import {
     toggleAllVisibleSelection,
     toggleRecordSelection,
 } from "../../utils/record_selection";
+import { showClassicView } from "../../utils/saas_access";
 
 export class CashbookPartnerList extends Component {
     static template = "cashbook.PartnerList";
@@ -121,6 +122,10 @@ export class CashbookPartnerList extends Component {
 
     setPartnerType(partnerType) {
         this.state.partnerType = partnerType;
+    }
+
+    get showClassicView() {
+        return showClassicView();
     }
 
     get selectedCount() {

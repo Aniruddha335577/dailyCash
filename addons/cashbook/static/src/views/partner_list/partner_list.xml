@@ -17,7 +17,10 @@
                             <i class="fa fa-trash me-1"/> Delete
                             <t t-if="selectedCount">(<t t-esc="selectedCount"/>)</t>
                         </button>
-                        <button type="button" class="btn btn-secondary" t-on-click="openClassicList">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                t-if="showClassicView"
+                                t-on-click="openClassicList">
                             Classic View
                         </button>
                     </div>

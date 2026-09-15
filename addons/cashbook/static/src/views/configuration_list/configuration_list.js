@@ -20,6 +20,7 @@ import {
     toggleAllVisibleSelection,
     toggleRecordSelection,
 } from "../../utils/record_selection";
+import { showClassicView } from "../../utils/saas_access";
 
 const SECTION_CONFIG = {
     entry_types: {
@@ -76,6 +77,10 @@ export class CashbookConfigurationList extends Component {
         onWillStart(async () => {
             await this.loadConfiguration();
         });
+    }
+
+    get showClassicView() {
+        return showClassicView();
     }
 
     get showEntryTypes() {

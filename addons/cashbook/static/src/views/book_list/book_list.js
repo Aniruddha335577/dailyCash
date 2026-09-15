@@ -16,6 +16,7 @@ import {
     toggleAllVisibleSelection,
     toggleRecordSelection,
 } from "../../utils/record_selection";
+import { showClassicView } from "../../utils/saas_access";
 
 export class CashbookBookList extends Component {
     static template = "cashbook.BookList";
@@ -108,6 +109,10 @@ export class CashbookBookList extends Component {
 
     formatMoney(amount, currencyId) {
         return formatMonetary(amount || 0, { currencyId });
+    }
+
+    get showClassicView() {
+        return showClassicView();
     }
 
     get selectedCount() {
