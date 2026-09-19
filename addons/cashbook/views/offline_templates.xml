@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="cashbook_webclient_offline" inherit_id="web.webclient_offline">
+        <xpath expr="//t[@t-call='web.layout']" position="replace">
+            <t t-call="web.layout">
+                <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
+                <t t-set="brand_name" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'HisabBro')"/>
+                <t t-set="brand_logo_raw" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_logo', '/cashbook/static/img/brand_logo.png')"/>
+                <t t-set="brand_logo" t-value="'/cashbook/static/img/brand_logo.png' if not brand_logo_raw or brand_logo_raw.endswith('.svg') else brand_logo_raw"/>
+                <t t-set="title" t-value="brand_name"/>
+                <t t-set="x_icon" t-value="brand_logo"/>
+                <t t-set="body_classname" t-value="'cb-offline-body'"/>
+                <t t-set="head">
+                    <script type="text/javascript">
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const status = document.querySelector(".cb-offline-status");
+                            const updateStatus = () => {
+                                if (status) {
+                                    status.textContent = navigator.onLine
+                                        ? "Connection reloading…"
+                                        : "Waiting for network…";
+                                }
+                            };
+                            window.addEventListener("online", () => {
+                                updateStatus();
+                                location.reload();
+                            });
+                            window.addEventListener("offline", updateStatus);
+                            updateStatus();
+                        });
+                    </script>
+                    <style>
+                        *, *::before, *::after { box-sizing: border-box; }
+
+                        body.cb-offline-body {
+                            margin: 0;
+                            padding: 0;
+                            min-height: 100vh;
+                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                            background: linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 100%);
+                            color: #0f172a;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            user-select: none;
+                        }
+
+                        .cb-offline-shell {
+                            width: min(440px, calc(100vw - 2rem));
+                            padding: 2.5rem 2rem 2rem;
+                            background: #ffffff;
+                            border-radius: 20px;
+                            border: 1px solid #e2e8f0;
+                            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
+                            text-align: center;
+                        }
+
+                        .cb-offline-logo {
+                            display: block;
+                            width: auto;
+                            max-width: 200px;
+                            max-height: 72px;
+                            margin: 0 auto 1.75rem;
+                            object-fit: contain;
+                        }
+
+                        .cb-offline-icon {
+                            width: 72px;
+                            height: 72px;
+                            margin: 0 auto 1.25rem;
+                            border-radius: 50%;
+                            background: linear-gradient(145deg, #eef2ff 0%, #e0e7ff 100%);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        .cb-offline-icon svg {
+                            width: 36px;
+                            height: 36px;
+                            stroke: #6366f1;
+                            fill: none;
+                            stroke-width: 2;
+                            stroke-linecap: round;
+                            stroke-linejoin: round;
+                        }
+
+                        .cb-offline-shell h1 {
+                            margin: 0 0 0.65rem;
+                            font-size: 1.65rem;
+                            font-weight: 800;
+                            letter-spacing: -0.02em;
+                            color: #0f172a;
+                        }
+
+                        .cb-offline-shell p {
+                            margin: 0;
+                            font-size: 0.95rem;
+                            line-height: 1.6;
+                            color: #64748b;
+                        }
+
+                        .cb-offline-message {
+                            margin-bottom: 1.75rem;
+                        }
+
+                        .cb-offline-status {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            margin-top: 1.25rem;
+                            font-size: 0.82rem;
+                            color: #94a3b8;
+                        }
+
+                        .cb-offline-status::before {
+                            content: "";
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background: #6366f1;
+                            animation: cb-offline-pulse 1.6s ease-in-out infinite;
+                        }
+
+                        @keyframes cb-offline-pulse {
+                            0%, 100% { opacity: 0.35; transform: scale(0.85); }
+                            50% { opacity: 1; transform: scale(1); }
+                        }
+
+                        .cb-offline-retry {
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            min-width: 148px;
+                            padding: 0.7rem 1.35rem;
+                            border: none;
+                            border-radius: 10px;
+                            background: #6366f1;
+                            color: #ffffff;
+                            font-size: 0.95rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: background 0.15s ease, transform 0.15s ease;
+                        }
+
+                        .cb-offline-retry:hover {
+                            background: #4f46e5;
+                        }
+
+                        .cb-offline-retry:active {
+                            transform: scale(0.98);
+                        }
+
+                        @media (prefers-color-scheme: dark) {
+                            body.cb-offline-body {
+                                background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+                                color: #f8fafc;
+                            }
+
+                            .cb-offline-shell {
+                                background: #1e293b;
+                                border-color: #334155;
+                                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+                            }
+
+                            .cb-offline-shell h1 { color: #f8fafc; }
+                            .cb-offline-shell p { color: #94a3b8; }
+                            .cb-offline-icon {
+                                background: linear-gradient(145deg, #312e81 0%, #3730a3 100%);
+                            }
+                            .cb-offline-icon svg { stroke: #a5b4fc; }
+                        }
+                    </style>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                </t>
+                <div class="cb-offline-shell">
+                    <img class="cb-offline-logo" t-att-src="brand_logo" t-att-alt="brand_name"/>
+                    <div class="cb-offline-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M1 1l22 22"/>
+                            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+                            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+                            <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+                            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                            <line x1="12" y1="20" x2="12.01" y2="20"/>
+                        </svg>
+                    </div>
+                    <h1>No connection</h1>
+                    <p class="cb-offline-message">
+                        We couldn't reach the server. Check your network —
+                        <t t-esc="brand_name"/> will reload automatically once you're back online.
+                    </p>
+                    <button type="button" class="cb-offline-retry" onclick="location.reload()">
+                        Try again
+                    </button>
+                    <p class="cb-offline-status">Waiting for network…</p>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>
