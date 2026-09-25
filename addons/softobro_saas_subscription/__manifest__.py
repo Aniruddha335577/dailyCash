@@ -1,6 +1,6 @@
 {
     "name": "SoftoBRo SaaS Subscription",
-    "version": "19.0.1.0.11",
+    "version": "19.0.1.0.12",
     "category": "Hidden",
     "summary": "Tenant subscription entitlements, provisioner API, and user-limit enforcement",
     "license": "LGPL-3",

@@ -7,6 +7,7 @@ import secrets
 from pathlib import Path
 
 from odoo import Command, _, api, fields, models
+from odoo.addons.base.models.ir_mail_server import MailDeliveryException
 from odoo.exceptions import AccessDenied, UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
@@ -183,13 +184,61 @@ class SaasSubscription(models.Model):
             user.write({"active": False})
 
     @api.model
-    def _send_invitation_email(self, user):
+    def _ensure_outbound_mail_identity(self):
+        """Provision/shell runs without a logged-in user; avoid catchall@ / empty From."""
+        icp = self.env["ir.config_parameter"].sudo()
+        brand = icp.get_param("cashbook.brand_name") or "HisabBro"
+        outbound = "noreply@softobro.com"
+        company = self.env.company.sudo()
+        partner = company.partner_id
+        if partner.email != outbound:
+            partner.write({"email": outbound})
+        if not company.name or company.name == "My Company":
+            company.write({"name": brand})
+        for alias_domain in self.env["mail.alias.domain"].sudo().search([]):
+            if alias_domain.default_from_email != outbound:
+                alias_domain.write({"default_from": outbound})
+
+    @api.model
+    def _apply_hishabbro_invite_templates(self):
         try:
-            user.with_context(create_user=True).action_reset_password()
-            return "sent"
-        except UserError as exc:
+            from odoo.addons.cashbook.hooks import apply_hishabbro_invite_mail_templates
+
+            apply_hishabbro_invite_mail_templates(self.env)
+        except ImportError:
+            _logger.warning("cashbook not installed; HisabBro invite templates not applied")
+
+    @api.model
+    def _send_invitation_email(self, user):
+        """Send signup invite (same template as UI). Shell/Postman must set From + templates first."""
+        self._ensure_outbound_mail_identity()
+        self._apply_hishabbro_invite_templates()
+        if not user.email:
+            _logger.warning("Invitation skipped: user %s has no email", user.login)
+            return "email_failed"
+
+        Mail = self.env["mail.mail"].sudo()
+        before_ids = set(Mail.search([("email_to", "=", user.email)]).ids)
+        try:
+            # Odoo 19 checks create_user == 1 (not truthy-only in all code paths).
+            user.with_context(create_user=1).action_reset_password()
+        except (UserError, MailDeliveryException) as exc:
             _logger.warning("Invitation email failed for %s: %s", user.login, exc)
             return "email_failed"
+
+        failed = Mail.search([
+            ("email_to", "=", user.email),
+            ("id", "not in", list(before_ids)),
+            ("state", "=", "exception"),
+        ], limit=1)
+        if failed:
+            _logger.warning(
+                "Invitation mail in exception for %s: %s",
+                user.login,
+                failed.failure_reason or failed.failure_type,
+            )
+            return "email_failed"
+        return "sent"
 
     @api.model
     def provisioner_onboard(
@@ -221,6 +270,7 @@ class SaasSubscription(models.Model):
         self._set_config_param(ADMIN_EMAIL_PARAM, customer_email)
         self._set_config_param(ADMIN_USER_ID_PARAM, str(admin_user.id))
 
+        self._ensure_outbound_mail_identity()
         invitation_status = self._send_invitation_email(admin_user)
         subscription.write({
             "admin_user_id": admin_user.id,

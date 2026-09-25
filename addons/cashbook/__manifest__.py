@@ -1,6 +1,6 @@
 {
     "name": "HisabBro",
-    "version": "19.0.1.0.22",
+    "version": "19.0.1.0.24",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
@@ -9,6 +9,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/cashbook_config.xml",
+        "data/mail_invite_templates.xml",
         "data/brand_logo_config.xml",
         "data/payment_method_data.xml",
         "data/currency_data.xml",

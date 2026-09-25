@@ -8,3 +8,4 @@ from . import payment_method
 from . import payment
 from . import report_template
 from . import saas_restriction
+from . import mail_template_hooks
