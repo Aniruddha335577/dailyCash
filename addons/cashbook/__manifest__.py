@@ -1,11 +1,11 @@
 {
     "name": "HisabBro",
-    "version": "19.0.1.0.19",
+    "version": "19.0.1.0.20",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",
     "license": "LGPL-3",
     "author": "SoftoBRo",
-    "depends": ["web"],
+    "depends": ["web", "mail", "auth_signup"],
     "data": [
         "security/ir.model.access.csv",
         "data/cashbook_config.xml",
@@ -18,6 +18,7 @@
         "report/entry_report.xml",
         "report/entry_list_report.xml",
         "views/login_templates.xml",
+        "views/mail_templates.xml",
         "views/offline_templates.xml",
         "views/business_views.xml",
         "views/book_views.xml",
