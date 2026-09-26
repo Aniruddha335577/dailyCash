@@ -179,14 +179,25 @@ class SaasSubscription(models.Model):
                 icp.set_param(key, value)
 
     @api.model
+    def _is_unusable_public_url(self, url: str | None) -> bool:
+        value = (url or "").strip().lower()
+        if not value:
+            return True
+        if "localhost" in value or "127.0.0.1" in value:
+            return True
+        if "template.invalid" in value or value.endswith(".invalid"):
+            return True
+        return False
+
+    @api.model
     def _resolve_public_base_url(self) -> str:
-        """Canonical HTTPS origin for emails and signup links (never localhost from template)."""
+        """Canonical HTTPS origin for emails and signup links (never dev/template placeholders)."""
         icp = self.env["ir.config_parameter"].sudo()
         stored = (icp.get_param(TENANT_PUBLIC_URL_PARAM) or "").strip().rstrip("/")
-        if stored:
+        if stored and not self._is_unusable_public_url(stored):
             return stored
         base = (icp.get_param("web.base.url") or "").strip().rstrip("/")
-        if base and "localhost" not in base and "127.0.0.1" not in base:
+        if base and not self._is_unusable_public_url(base):
             return base
         subscription = self.search([], limit=1)
         slug = subscription.tenant_slug if subscription else self.env.cr.dbname
@@ -226,12 +237,12 @@ class SaasSubscription(models.Model):
             return
         icp = self.env["ir.config_parameter"].sudo()
         stored = (icp.get_param(TENANT_PUBLIC_URL_PARAM) or "").strip().rstrip("/")
-        if stored:
+        if stored and not self._is_unusable_public_url(stored):
             if (icp.get_param("web.base.url") or "").strip().rstrip("/") != stored:
                 icp.set_param("web.base.url", stored)
             return
         base = icp.get_param("web.base.url") or ""
-        if "localhost" in base or "127.0.0.1" in base or not base.strip():
+        if self._is_unusable_public_url(base):
             subscription = self.search([], limit=1)
             slug = subscription.tenant_slug if subscription else self.env.cr.dbname
             derived = self._derive_tenant_public_url(slug)

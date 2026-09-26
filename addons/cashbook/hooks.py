@@ -44,7 +44,7 @@ _INVITE_BODY = """
                         </div>
                         <b>This link will remain valid for
                         <t t-out="int(int(object.env['ir.config_parameter'].sudo().get_param('auth_signup.signup.validity.hours',144))/24)"></t> days.</b><br/>
-                        <t t-set="website_url" t-value="object.env['ir.config_parameter'].sudo().get_param('saas.tenant.public_url') or object.get_base_url()"></t>
+                        <t t-set="website_url" t-value="object.get_base_url()"></t>
                         Your workspace URL: <b><a t-att-href="website_url" t-out="website_url or ''">https://example.com</a></b><br/>
                         Sign in email: <b><t t-out="object.email or ''">user@example.com</t></b><br/><br/>
                         If you did not expect this invitation, you can ignore this email.
