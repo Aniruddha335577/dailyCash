@@ -6,6 +6,14 @@ from odoo import Command, api, models
 class ResUsers(models.Model):
     _inherit = "res.users"
 
+    def get_base_url(self) -> str:
+        self.ensure_one()
+        if self.env["saas.platform.mixin"].saas_tenant_mode():
+            resolved = self.env["saas.subscription"].sudo()._resolve_public_base_url()
+            if resolved:
+                return resolved
+        return super().get_base_url()
+
     @api.model
     def _saas_platform_groups(self):
         return {

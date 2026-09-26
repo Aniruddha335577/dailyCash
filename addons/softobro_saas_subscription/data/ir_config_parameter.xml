@@ -12,4 +12,16 @@
         <field name="key">saas.it_support_login</field>
         <field name="value">support@softobro.internal</field>
     </record>
+    <record id="param_saas_public_base_domain" model="ir.config_parameter">
+        <field name="key">saas.public_base_domain</field>
+        <field name="value">softobro.com</field>
+    </record>
+    <record id="param_saas_tenant_url_suffix" model="ir.config_parameter">
+        <field name="key">saas.tenant_url_suffix</field>
+        <field name="value">-hishabbro</field>
+    </record>
+    <record id="param_saas_public_url_scheme" model="ir.config_parameter">
+        <field name="key">saas.public_url_scheme</field>
+        <field name="value">https</field>
+    </record>
 </odoo>

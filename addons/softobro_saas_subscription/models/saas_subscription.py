@@ -16,6 +16,7 @@ MASTER_KEY_PARAM = "saas.provisioner.master_key"
 API_KEY_PARAM = "saas.provisioner.api_key"
 ADMIN_EMAIL_PARAM = "saas.provisioner.admin_email"
 ADMIN_USER_ID_PARAM = "saas.provisioner.admin_user_id"
+TENANT_PUBLIC_URL_PARAM = "saas.tenant.public_url"
 
 FEATURE_MAP_PATH = Path(__file__).resolve().parents[1] / "data" / "feature_module_map.json"
 
@@ -166,6 +167,78 @@ class SaasSubscription(models.Model):
         self.env["ir.config_parameter"].sudo().set_param(key, value or "")
 
     @api.model
+    def _ensure_saas_url_config(self):
+        icp = self.env["ir.config_parameter"].sudo()
+        defaults = {
+            "saas.public_base_domain": "softobro.com",
+            "saas.tenant_url_suffix": "-hishabbro",
+            "saas.public_url_scheme": "https",
+        }
+        for key, value in defaults.items():
+            if not icp.get_param(key):
+                icp.set_param(key, value)
+
+    @api.model
+    def _resolve_public_base_url(self) -> str:
+        """Canonical HTTPS origin for emails and signup links (never localhost from template)."""
+        icp = self.env["ir.config_parameter"].sudo()
+        stored = (icp.get_param(TENANT_PUBLIC_URL_PARAM) or "").strip().rstrip("/")
+        if stored:
+            return stored
+        base = (icp.get_param("web.base.url") or "").strip().rstrip("/")
+        if base and "localhost" not in base and "127.0.0.1" not in base:
+            return base
+        subscription = self.search([], limit=1)
+        slug = subscription.tenant_slug if subscription else self.env.cr.dbname
+        derived = self._derive_tenant_public_url(slug)
+        return derived or base
+
+    @api.model
+    def _normalize_public_url(self, url: str) -> str:
+        url = (url or "").strip().rstrip("/")
+        if not url.startswith(("http://", "https://")):
+            raise ValidationError(_("Tenant public URL must start with http:// or https://."))
+        return url
+
+    @api.model
+    def _set_tenant_public_url(self, url: str):
+        """Canonical tenant URL for emails (web.base.url + signup links)."""
+        url = self._normalize_public_url(url)
+        icp = self.env["ir.config_parameter"].sudo()
+        icp.set_param(TENANT_PUBLIC_URL_PARAM, url)
+        icp.set_param("web.base.url", url)
+
+    @api.model
+    def _derive_tenant_public_url(self, tenant_slug: str) -> str | None:
+        icp = self.env["ir.config_parameter"].sudo()
+        domain = (icp.get_param("saas.public_base_domain") or "").strip().lstrip(".")
+        if not domain or not tenant_slug:
+            return None
+        suffix = icp.get_param("saas.tenant_url_suffix") or ""
+        scheme = (icp.get_param("saas.public_url_scheme") or "https").strip().rstrip(":/")
+        return f"{scheme}://{tenant_slug}{suffix}.{domain}".rstrip("/")
+
+    @api.model
+    def _ensure_tenant_public_url(self, url: str | None = None):
+        self._ensure_saas_url_config()
+        if url:
+            self._set_tenant_public_url(url)
+            return
+        icp = self.env["ir.config_parameter"].sudo()
+        stored = (icp.get_param(TENANT_PUBLIC_URL_PARAM) or "").strip().rstrip("/")
+        if stored:
+            if (icp.get_param("web.base.url") or "").strip().rstrip("/") != stored:
+                icp.set_param("web.base.url", stored)
+            return
+        base = icp.get_param("web.base.url") or ""
+        if "localhost" in base or "127.0.0.1" in base or not base.strip():
+            subscription = self.search([], limit=1)
+            slug = subscription.tenant_slug if subscription else self.env.cr.dbname
+            derived = self._derive_tenant_public_url(slug)
+            if derived:
+                self._set_tenant_public_url(derived)
+
+    @api.model
     def _disable_shared_admins(self, admin_email: str, shared_logins: list[str] | None = None):
         logins = shared_logins or ["admin"]
         users = self.env["res.users"].sudo().search([
@@ -211,6 +284,7 @@ class SaasSubscription(models.Model):
     @api.model
     def _send_invitation_email(self, user):
         """Send signup invite (same template as UI). Shell/Postman must set From + templates first."""
+        self._ensure_tenant_public_url()
         self._ensure_outbound_mail_identity()
         self._apply_hishabbro_invite_templates()
         if not user.email:
@@ -241,16 +315,39 @@ class SaasSubscription(models.Model):
         return "sent"
 
     @api.model
+    def provisioner_initialize_tenant(self, tenant_slug: str, tenant_public_url: str):
+        """Run right after pg_restore: URL + SaaS URL config before any mail."""
+        self._ensure_saas_url_config()
+        self._set_tenant_public_url(tenant_public_url)
+        subscription = self.search([], limit=1)
+        if subscription:
+            subscription.write({"tenant_slug": tenant_slug, "status": "active"})
+        else:
+            self.create({
+                "tenant_slug": tenant_slug,
+                "status": "active",
+            })
+        icp = self.env["ir.config_parameter"].sudo()
+        return {
+            "ok": True,
+            "tenant_slug": tenant_slug,
+            "web_base_url": icp.get_param("web.base.url"),
+        }
+
+    @api.model
     def provisioner_onboard(
         self,
         tenant_slug: str,
         customer_name: str,
         customer_email: str,
         shared_admin_logins: list[str] | None = None,
+        tenant_public_url: str | None = None,
     ):
         customer_email = self._normalize_email(customer_email)
         if not customer_email:
             raise ValidationError(_("Customer email is required."))
+
+        self._ensure_tenant_public_url(tenant_public_url)
 
         subscription = self.search([("tenant_slug", "=", tenant_slug)], limit=1)
         if not subscription:
@@ -287,10 +384,12 @@ class SaasSubscription(models.Model):
         }
 
     @api.model
-    def provisioner_resend_invitation(self, email: str):
+    def provisioner_resend_invitation(self, email: str, tenant_public_url: str | None = None):
         email = self._normalize_email(email)
         if not email:
             raise ValidationError(_("Email is required."))
+
+        self._ensure_tenant_public_url(tenant_public_url)
 
         subscription = self._get_singleton()
         admin_user = subscription.admin_user_id

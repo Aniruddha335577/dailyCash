@@ -65,6 +65,7 @@ class SaasProvisionerController(http.Controller):
                 customer_name=body.get("customer_name") or "Tenant Admin",
                 customer_email=body.get("customer_email") or "",
                 shared_admin_logins=body.get("shared_admin_logins"),
+                tenant_public_url=body.get("tenant_public_url"),
             )
             cr.commit()
             return self._json_response(result)
