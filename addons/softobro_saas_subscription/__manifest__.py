@@ -1,6 +1,6 @@
 {
     "name": "SoftoBRo SaaS Subscription",
-    "version": "19.0.1.0.17",
+    "version": "19.0.1.0.19",
     "category": "Hidden",
     "summary": "Tenant subscription entitlements, provisioner API, and user-limit enforcement",
     "license": "LGPL-3",
@@ -21,7 +21,11 @@
     "assets": {
         "web.assets_backend": [
             "softobro_saas_subscription/static/src/saas_lockdown.js",
-            "softobro_saas_subscription/static/src/saas_user_menu.js",
+            (
+                "after",
+                "web/static/src/webclient/user_menu/user_menu_items.js",
+                "softobro_saas_subscription/static/src/saas_user_menu.js",
+            ),
             "softobro_saas_subscription/static/src/saas_user_menu.xml",
         ],
     },

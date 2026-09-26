@@ -1,47 +1,44 @@
 /** @odoo-module **/
 
-import { registry } from "@web/core/registry";
 import { patch } from "@web/core/utils/patch";
 import { session } from "@web/session";
 import { UserMenu } from "@web/webclient/user_menu/user_menu";
 
-/** Hidden for tenant subscribers (IT support keeps full menu). */
-const BLOCKED_USER_MENU_IDS = new Set([
+/** Profile menu entries hidden for tenant subscribers (IT support keeps full menu). */
+const SUBSCRIBER_HIDDEN_MENU_IDS = new Set([
     "support",
     "shortcuts",
-    "separator",
     "preferences",
     "odoo_account",
+    "install_pwa",
 ]);
 
-function lockDownUserMenuItems() {
-    if (!session.saas_platform_locked) {
-        return;
-    }
-    const menuItems = registry.category("user_menuitems");
-    for (const id of BLOCKED_USER_MENU_IDS) {
-        if (!menuItems.contains(id)) {
-            continue;
+function subscriberMenuLocked() {
+    return Boolean(session.saas_platform_locked);
+}
+
+function filterSubscriberUserMenu(elements) {
+    return elements.filter((element) => {
+        if (element.type === "separator") {
+            return false;
         }
-        const factory = menuItems.get(id);
-        menuItems.add(
-            id,
-            (env) => {
-                const item = factory(env);
-                return {
-                    ...item,
-                    show: () => false,
-                };
-            },
-            { force: true }
-        );
-    }
+        if (element.id && SUBSCRIBER_HIDDEN_MENU_IDS.has(element.id)) {
+            return false;
+        }
+        return true;
+    });
 }
 
 patch(UserMenu.prototype, {
+    getElements() {
+        const elements = super.getElements(...arguments);
+        if (!subscriberMenuLocked()) {
+            return elements;
+        }
+        return filterSubscriberUserMenu(elements);
+    },
+
     get saasHideDatabaseLabel() {
-        return Boolean(session.saas_platform_locked);
+        return subscriberMenuLocked();
     },
 });
-
-lockDownUserMenuItems();
