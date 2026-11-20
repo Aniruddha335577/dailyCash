@@ -4,7 +4,7 @@
         <xpath expr="//t[@t-call='web.layout']" position="replace">
             <t t-call="web.layout">
                 <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
-                <t t-set="brand_name" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'HisabBro')"/>
+                <t t-set="brand_name" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'DailyCash')"/>
                 <t t-set="brand_logo_raw" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_logo', '/cashbook/static/img/brand_logo.png')"/>
                 <t t-set="brand_logo" t-value="'/cashbook/static/img/brand_logo.png' if not brand_logo_raw or brand_logo_raw.endswith('.svg') else brand_logo_raw"/>
                 <t t-set="title" t-value="brand_name"/>

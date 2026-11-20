@@ -171,7 +171,7 @@ class SaasSubscription(models.Model):
         icp = self.env["ir.config_parameter"].sudo()
         defaults = {
             "saas.public_base_domain": "softobro.com",
-            "saas.tenant_url_suffix": "-hishabbro",
+            "saas.tenant_url_suffix": "-dailycash",
             "saas.public_url_scheme": "https",
         }
         for key, value in defaults.items():
@@ -271,7 +271,7 @@ class SaasSubscription(models.Model):
     def _ensure_outbound_mail_identity(self):
         """Provision/shell runs without a logged-in user; avoid catchall@ / empty From."""
         icp = self.env["ir.config_parameter"].sudo()
-        brand = icp.get_param("cashbook.brand_name") or "HisabBro"
+        brand = icp.get_param("cashbook.brand_name") or "DailyCash"
         outbound = "noreply@softobro.com"
         company = self.env.company.sudo()
         partner = company.partner_id
@@ -284,20 +284,20 @@ class SaasSubscription(models.Model):
                 alias_domain.write({"default_from": outbound})
 
     @api.model
-    def _apply_hishabbro_invite_templates(self):
+    def _apply_dailycash_invite_templates(self):
         try:
-            from odoo.addons.cashbook.hooks import apply_hishabbro_invite_mail_templates
+            from odoo.addons.cashbook.hooks import apply_dailycash_invite_mail_templates
 
-            apply_hishabbro_invite_mail_templates(self.env)
+            apply_dailycash_invite_mail_templates(self.env)
         except ImportError:
-            _logger.warning("cashbook not installed; HisabBro invite templates not applied")
+            _logger.warning("cashbook not installed; DailyCash invite templates not applied")
 
     @api.model
     def _send_invitation_email(self, user):
         """Send signup invite (same template as UI). Shell/Postman must set From + templates first."""
         self._ensure_tenant_public_url()
         self._ensure_outbound_mail_identity()
-        self._apply_hishabbro_invite_templates()
+        self._apply_dailycash_invite_templates()
         if not user.email:
             _logger.warning("Invitation skipped: user %s has no email", user.login)
             return "email_failed"

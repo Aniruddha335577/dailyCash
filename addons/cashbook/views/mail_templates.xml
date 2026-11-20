@@ -4,7 +4,7 @@
     <template id="cashbook_reset_password_email" inherit_id="auth_signup.reset_password_email">
         <xpath expr="//tr[td/table/tr/td/a[contains(@href, 'odoo.com')]]" position="replace"/>
         <xpath expr="//t[@t-if=&quot;user.signature&quot;]" position="replace">
-            <br/>HishabBro
+            <br/>DailyCash
         </xpath>
     </template>
 </odoo>

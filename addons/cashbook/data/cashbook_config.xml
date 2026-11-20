@@ -6,6 +6,6 @@
     </record>
     <record id="config_cashbook_brand_name" model="ir.config_parameter">
         <field name="key">cashbook.brand_name</field>
-        <field name="value">HisabBro</field>
+        <field name="value">DailyCash</field>
     </record>
 </odoo>

@@ -6,7 +6,7 @@ def migrate(cr, version):
     icp = env["ir.config_parameter"].sudo()
     defaults = {
         "saas.public_base_domain": "softobro.com",
-        "saas.tenant_url_suffix": "-hishabbro",
+        "saas.tenant_url_suffix": "-dailycash",
         "saas.public_url_scheme": "https",
     }
     for key, value in defaults.items():

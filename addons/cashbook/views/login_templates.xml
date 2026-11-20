@@ -2,7 +2,7 @@
 <odoo>
     <template id="cashbook_layout_title" inherit_id="web.layout">
         <xpath expr="//title" position="replace">
-            <title t-esc="title or request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'HisabBro')"/>
+            <title t-esc="title or request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'DailyCash')"/>
         </xpath>
     </template>
 
@@ -22,7 +22,7 @@
             <div class="cb-login-shell">
                 <aside class="cb-login-brand">
                     <div class="cb-login-brand-inner">
-                        <t t-set="brand_name" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'HisabBro')"/>
+                        <t t-set="brand_name" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'DailyCash')"/>
                         <t t-set="brand_logo_raw" t-value="request.env['ir.config_parameter'].sudo().get_param('cashbook.brand_logo', '/cashbook/static/img/brand_logo.png')"/>
                         <t t-set="brand_logo" t-value="'/cashbook/static/img/brand_logo.png' if not brand_logo_raw or brand_logo_raw.endswith('.svg') else brand_logo_raw"/>
                         <img class="cb-login-logo-mark" t-att-src="brand_logo" t-att-alt="brand_name"/>

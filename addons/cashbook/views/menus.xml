@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_cashbook_root"
-              name="HisabBro"
+              name="DailyCash"
               sequence="25"/>
 
     <menuitem id="menu_cashbook_business"

@@ -1,5 +1,5 @@
 {
-    "name": "HisabBro",
+    "name": "DailyCash",
     "version": "19.0.1.0.26",
     "category": "Accounting/Accounting",
     "summary": "Lightweight business ledger without accounting dependencies",

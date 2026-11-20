@@ -35,7 +35,7 @@ _INVITE_BODY = """
                 <tr><td valign="top" style="font-size: 13px;">
                     <div>
                         Dear <t t-out="object.name or ''">User</t>,<br /><br />
-                        You have been invited to <strong><t t-out="object.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'HisabBro')"/></strong>.
+                        You have been invited to <strong><t t-out="object.env['ir.config_parameter'].sudo().get_param('cashbook.brand_name', 'DailyCash')"/></strong>.
                         <div style="margin: 16px 0px 16px 0px;">
                             <a t-att-href="object.partner_id._get_signup_url()"
                                 t-attf-style="background-color: {{object.company_id.email_secondary_color or '#875A7B'}}; padding: 8px 16px 8px 16px; text-decoration: none; color: {{object.company_id.email_primary_color or '#FFFFFF'}}; border-radius: 5px; font-size:13px;">
@@ -49,7 +49,7 @@ _INVITE_BODY = """
                         Sign in email: <b><t t-out="object.email or ''">user@example.com</t></b><br/><br/>
                         If you did not expect this invitation, you can ignore this email.
                         <br/><br/>
-                        Thanks,<br/>HishabBro
+                        Thanks,<br/>DailyCash
                     </div>
                 </td></tr>
                 <tr><td style="text-align:center;">
@@ -79,9 +79,9 @@ _INVITE_BODY = """
 """
 
 
-def apply_hishabbro_invite_mail_templates(env):
+def apply_dailycash_invite_mail_templates(env):
     icp = env["ir.config_parameter"].sudo()
-    brand = icp.get_param("cashbook.brand_name") or "HisabBro"
+    brand = icp.get_param("cashbook.brand_name") or "DailyCash"
     subject_internal = f"You are invited to {brand}"
     subject_portal = f"Your {brand} account"
 
@@ -122,5 +122,5 @@ def post_init_hook(env):
     logo = icp.get_param("cashbook.brand_logo") or ""
     if not logo or logo.endswith(".svg"):
         icp.set_param("cashbook.brand_logo", DEFAULT_BRAND_LOGO)
-    apply_hishabbro_invite_mail_templates(env)
+    apply_dailycash_invite_mail_templates(env)
     _strip_odoo_email_footer(env)

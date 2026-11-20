@@ -55,6 +55,6 @@ class ReportCashbookEntryList(models.AbstractModel):
                 self.env, fields.Datetime.now()
             ),
             "saas_logo_data_uri": _get_saas_logo_data_uri(),
-            "powered_by_label": "Powered by HisabBro",
-            "saas_product_label": "HisabBro",
+            "powered_by_label": "Powered by DailyCash",
+            "saas_product_label": "DailyCash",
         }
